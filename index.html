@@ -419,6 +419,58 @@ body.category-view footer{display:none}
  .category-section.hot-theme .hero p{font-size:12px}
 }
 
+
+/* V7 FINAL — SICAK İÇECEKLER: gerçek kategori kimliği */
+.category-section.hot-theme{position:relative;padding-top:4px}
+.category-section.hot-theme .hero{
+  margin-top:18px!important; min-height:210px!important; padding:48px 28px 30px!important;
+  background-color:#7b4b2d!important;
+  background-image:radial-gradient(circle at 12% 25%,#e3b85c55 0 3px,transparent 4px),radial-gradient(circle at 88% 70%,#f6dfb088 0 3px,transparent 4px),repeating-linear-gradient(135deg,#ffffff09 0 12px,#00000008 12px 24px)!important;
+  border:4px solid #3e281d!important;border-radius:30px!important;
+  box-shadow:0 9px 0 #3e281d55, inset 0 0 0 6px #f4d99f55!important;
+}
+.category-section.hot-theme .hero:before{
+  content:"☕  70'LER KAHVEHANE  •  ÇAY & KAHVE  ☕"!important;
+  position:absolute!important;left:50%!important;top:14px!important;transform:translateX(-50%)!important;
+  width:auto!important;max-width:88%!important;white-space:nowrap!important;padding:7px 15px!important;
+  background:#f6dfb0!important;color:#4b2d20!important;border:2px solid #3e281d!important;border-radius:4px!important;
+  font-size:10px!important;font-weight:900!important;letter-spacing:1.4px!important;opacity:1!important;
+}
+.category-section.hot-theme .hero:after{
+  width:150px!important;height:150px!important;right:-42px!important;top:-45px!important;
+  border:22px solid #e1b85e!important;opacity:.8!important;box-shadow:0 0 0 7px #fff5df33!important;
+}
+.category-section.hot-theme .hero h1{
+  margin:18px 0 6px!important;color:#fff7e6!important;text-transform:uppercase!important;
+  font-size:42px!important;letter-spacing:2px!important;text-shadow:3px 3px 0 #3e281d!important;
+}
+.category-section.hot-theme .hero h1:after{content:"✦  ─── ☕ ───  ✦"!important;display:block!important;margin-top:10px!important;color:#e7bf68!important;font-size:15px!important;letter-spacing:3px!important}
+.category-section.hot-theme .hero p{
+  display:inline-block!important;margin:6px auto 0!important;padding:8px 18px!important;
+  color:#4b2d20!important;background:#fff5df!important;border:2px solid #3e281d!important;border-radius:4px!important;font-weight:700!important;
+}
+.category-section.hot-theme .grid{margin-top:28px!important;gap:20px!important}
+.category-section.hot-theme .card{
+  border:3px solid #3e281d!important;border-radius:20px!important;background:#fff8eb!important;
+  box-shadow:0 8px 0 #3e281d33, inset 0 0 0 4px #e7c98255!important;
+}
+.category-section.hot-theme .card:before{
+  content:"70'LER"!important;left:14px!important;top:14px!important;padding:5px 10px!important;
+  background:#7b4b2d!important;color:#f8e1ae!important;border:2px solid #e1b85e!important;border-radius:3px!important;
+  font-size:10px!important;font-weight:900!important;letter-spacing:1.5px!important;
+}
+.category-section.hot-theme .photo{background:#ead2a9!important;border-bottom:3px solid #3e281d!important}
+.category-section.hot-theme .card-body{background:linear-gradient(180deg,#fff8eb,#f3dfbd)!important;padding:16px 17px 18px!important}
+.category-section.hot-theme .product-title-row h3{color:#5a3523!important;font-size:22px!important}
+.category-section.hot-theme .price{color:#fff8eb!important;background:#8b4f2a!important;border:2px solid #3e281d!important;box-shadow:3px 3px 0 #d3a84f!important;border-radius:4px!important}
+.category-section.hot-theme .desc{color:#74543f!important}
+.category-section.hot-theme .weight{background:#f3dfbd!important;color:#68472f!important;border-color:#c79a4b!important}
+@media(max-width:520px){
+ .category-section.hot-theme .hero{min-height:185px!important;padding:43px 14px 24px!important;margin-top:15px!important}
+ .category-section.hot-theme .hero h1{font-size:30px!important;letter-spacing:1px!important}
+ .category-section.hot-theme .hero:before{font-size:7px!important;letter-spacing:.8px!important;padding:6px 8px!important}
+}
+
 </style>
 </head>
 <body>
@@ -525,14 +577,15 @@ function renderMenu(){
   nav.innerHTML=`<button onclick="showHome()">← Ana Sayfa</button>`+categories.map(c=>`<button data-cat="${c.id}" onclick="openCategory('${c.id}')">${esc(c.name)}</button>`).join("");
   menu.innerHTML=categories.map(c=>{
     const arr=products.filter(p=>p.category_id===c.id);
-    const hasan=/çiğ\s*k[öo]fte/i.test(c.name);
-    const kafe=/kafe\s*&\s*mant[ıi]/i.test(c.name);
-    const cold=/soğuk\s*içecekler/i.test(c.name);
-    const hot=/sıcak\s*içecekler/i.test(c.name);
+    const cname=(c.name||"").toLocaleLowerCase("tr-TR").trim();
+    const hasan=cname.includes("çiğ köfte");
+    const kafe=cname.includes("kafe") && cname.includes("mantı");
+    const cold=cname.includes("soğuk") && cname.includes("içecek");
+    const hot=cname.includes("sıcak") && cname.includes("içecek");
     return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''}" id="cat-${c.id}" style="display:none">
       <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       ${hasan||kafe?"":`<h1>${esc(c.name)}</h1>`}${hasan||kafe?"":`<p>${esc(c.description||"")}</p>`}${kafe?`<p class="kafe-subtitle">${esc(c.description||"")}</p>`:""}</div>
-      ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
+      ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
     </section>`;
   }).join("");
   showHome();
@@ -558,7 +611,7 @@ function openCategory(id){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function scrollToCat(id,btn){openCategory(id);}
-function productCard(p,hasan){
+function productCard(p,hasan,hot){
   const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
   return `<article class="card product-card">
     <div class="photo product-photo">
