@@ -27,7 +27,7 @@ header{text-align:center;padding:20px 8px 12px}.logo{width:min(210px,55vw);heigh
 .category-card .shape{position:absolute;right:-18px;bottom:-25px;width:85px;height:85px;border-radius:50%;border:13px solid #27242118}
 .category-card .icon{font-size:25px;margin-bottom:8px;display:block}.category-card h3{position:relative;margin:0;font-size:20px}.category-card p{position:relative;margin:4px 0 0;font-size:12px;color:#6b6259;max-width:75%}
 .nav{display:flex;gap:8px;overflow:auto;padding:8px 0 14px;position:sticky;top:0;background:linear-gradient(var(--cream) 75%,transparent);z-index:5}
-.nav button{white-space:nowrap;border:2px solid var(--dark);background:var(--paper);padding:9px 14px;border-radius:999px;font-weight:700}.nav button.active{background:var(--pink);color:white}
+.nav{scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav button{white-space:nowrap;border:2px solid var(--dark);background:var(--paper);padding:8px 10px;border-radius:999px;font-weight:700;font-size:14px}.nav button.active{background:var(--pink);color:white}
 .hero{background:var(--paper);border:2px solid var(--dark);border-radius:26px;padding:22px 18px;margin:8px 0 18px;box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden}
 .category-section.hasan-theme .hero{
   background:linear-gradient(135deg,#f8eee0,#fffaf2);
@@ -101,7 +101,7 @@ footer{margin:26px 0 18px;text-align:center;padding:18px 12px 8px}
 .admin-link:hover{transform:translateY(-1px);background:#f9edf3}
 .category-section .grid{justify-content:center}
 .category-section .card{width:100%;max-width:520px}
-@media(min-width:800px){.category-section .grid{grid-template-columns:repeat(2,minmax(280px,520px));justify-content:center}}
+@media(min-width:800px){.category-section .grid{grid-template-columns:repeat(2,minmax(280px,520px));justify-content:center}.category-section .grid:has(.card:only-child){grid-template-columns:minmax(280px,520px)}}
 body.category-view footer{display:none}
 
 .category-section .card .photo{aspect-ratio:1.18/1;min-height:240px}
