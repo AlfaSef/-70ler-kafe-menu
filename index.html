@@ -108,6 +108,24 @@ body.category-view footer{display:none}
 .category-section .card .photo img{width:100%;height:100%;object-fit:cover;display:block}
 
 @media(min-width:700px){.category-section .grid{gap:18px}.category-section .hero{margin-bottom:20px}}
+
+.product-card{position:relative;background:#fffaf2;border-color:#241f1b;box-shadow:0 5px 0 #241f1b18}
+.product-photo{position:relative;aspect-ratio:1.22/1;overflow:hidden;background:#ead8c1}
+.product-photo img{transition:transform .25s ease}
+.product-card:hover .product-photo img{transform:scale(1.025)}
+.photo-stamp{position:absolute;left:10px;bottom:10px;padding:4px 7px;border-radius:999px;background:#fffaf2e8;border:1px solid #a5231b;color:#a5231b;font-size:9px;font-weight:800;letter-spacing:.8px}
+.photo-placeholder{text-align:center;line-height:1.4;color:#7d7064}
+.product-card .card-body{padding:14px 14px 15px}
+.product-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.product-title-row h3{margin:0;color:#241f1b;font-size:20px;line-height:1.15}
+.product-card .price{flex:none;margin:0;padding:5px 8px;border:1.5px solid #a5231b;border-radius:8px;background:#fff2ee;color:#a5231b;font-size:15px;line-height:1.1;white-space:nowrap}
+.product-card .desc{margin-top:7px;min-height:0;color:#6c5e52;font-size:13px;line-height:1.4}
+.product-card .empty-desc{color:#988b7f;font-style:italic}
+@media(max-width:520px){
+  .product-title-row{gap:8px}
+  .product-title-row h3{font-size:18px}
+  .product-card .price{font-size:14px}
+}
 </style>
 </head>
 <body>
@@ -244,12 +262,18 @@ function openCategory(id){
 }
 function scrollToCat(id,btn){openCategory(id);}
 function productCard(p){
-  return `<article class="card">
-    <div class="photo">${p.image_url?`<img src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" loading="lazy">`:"Fotoğraf eklenmemiş"}</div>
+  const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
+  return `<article class="card product-card">
+    <div class="photo product-photo">
+      ${p.image_url?`<img src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" loading="lazy">`:`<div class="photo-placeholder">Fotoğraf<br>eklenmemiş</div>`}
+      <span class="photo-stamp">HASAN USTA</span>
+    </div>
     <div class="card-body">
-      <h3>${esc(p.name)}</h3>
-      ${p.description?`<div class="desc">${esc(p.description)}</div>`:""}
-      <div class="price">${p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi"}</div>
+      <div class="product-title-row">
+        <h3>${esc(p.name)}</h3>
+        <span class="price">${price}</span>
+      </div>
+      ${p.description?`<div class="desc">${esc(p.description)}</div>`:`<div class="desc empty-desc">Lezzetimizi keşfedin.</div>`}
     </div>
   </article>`;
 }
