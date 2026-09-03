@@ -187,6 +187,101 @@ body.category-view footer{display:none}
   letter-spacing:5px;
   color:#a9c4b4;
 }
+
+/* V4 — kategoriye özel hero tasarımları */
+.category-section .hero{min-height:0;}
+
+/* Çiğ Köfte / Hasan Usta: logo önde, çerçeve daha kompakt */
+.category-section.hasan-theme .hero{
+  padding:14px 18px 16px;
+  background:linear-gradient(135deg,#f8eee0 0%,#fffaf2 55%,#f3e3c9 100%);
+  border:2px solid #211d1a;
+  border-radius:22px;
+  box-shadow:0 5px 0 #211d1a20;
+}
+.category-section.hasan-theme .hero:after{
+  width:82px;height:82px;right:-28px;top:-28px;
+  border:13px solid #b98b35;
+  opacity:.55;
+}
+.category-section.hasan-theme .section-logo{
+  width:270px;max-width:88%;margin:0 auto;
+  filter:drop-shadow(0 3px 2px #0002);
+}
+.category-section.hasan-theme .hero h1,
+.category-section.hasan-theme .hero p{display:none;}
+
+/* Kafe & Mantı: tek güçlü marka başlığı */
+.category-section.kafe-theme .hero{
+  padding:22px 18px 20px;
+  background:linear-gradient(135deg,#fff7f5,#f8f0f4 48%,#eef6f1);
+  border:2px solid #272421;
+  border-radius:24px;
+}
+.category-section.kafe-theme .hero:after{
+  width:105px;height:105px;right:-32px;top:-32px;
+  border:16px solid #a9c4b4;
+}
+.category-section.kafe-theme .kafe-ribbon{
+  position:relative;z-index:1;
+  display:inline-block;
+  padding:8px 18px 7px;
+  border:1.8px solid #272421;
+  border-radius:999px;
+  background:#a9c4b4;
+  color:#272421;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  line-height:1;
+  box-shadow:0 2px 0 #27242118;
+}
+.category-section.kafe-theme .kafe-subtitle{
+  position:relative;z-index:1;
+  margin:10px 0 0;
+  color:#6b6259;
+  font-size:14px;
+}
+
+/* Soğuk İçecekler: ferah mint / turkuaz retro */
+.category-section.cold-theme .hero{
+  background:linear-gradient(135deg,#eef7f1,#fffaf2 52%,#e7f1ee);
+  border-color:#31524a;
+  box-shadow:0 5px 0 #31524a20;
+}
+.category-section.cold-theme .hero:after{
+  border-color:#8eb9aa;
+  opacity:.75;
+}
+.category-section.cold-theme .hero h1{color:#2f6558;font-size:30px;}
+.category-section.cold-theme .hero p{color:#527067;}
+.category-section.cold-theme .card{border-color:#31524a;}
+.category-section.cold-theme .price{color:#2f6558;}
+.category-section.cold-theme .photo{background:#e3f0eb;}
+
+/* Sıcak İçecekler: sıcak krem / kahve tonları */
+.category-section.hot-theme .hero{
+  background:linear-gradient(135deg,#fff3df,#fffaf2 52%,#f4e5cf);
+  border-color:#594333;
+  box-shadow:0 5px 0 #59433320;
+}
+.category-section.hot-theme .hero:after{
+  border-color:#c49a43;
+  opacity:.75;
+}
+.category-section.hot-theme .hero h1{color:#7b4b2d;font-size:30px;}
+.category-section.hot-theme .hero p{color:#765f4e;}
+.category-section.hot-theme .card{border-color:#594333;}
+.category-section.hot-theme .price{color:#8a4d28;}
+.category-section.hot-theme .photo{background:#f1dfc7;}
+
+@media(max-width:520px){
+  .category-section.hasan-theme .hero{padding:11px 12px 13px;}
+  .category-section.hasan-theme .section-logo{width:245px;max-width:92%;}
+  .category-section.kafe-theme .kafe-ribbon{font-size:14px;padding:7px 13px;}
+  .category-section.cold-theme .hero h1,.category-section.hot-theme .hero h1{font-size:26px;}
+}
+
 </style>
 </head>
 <body>
@@ -295,9 +390,11 @@ function renderMenu(){
     const arr=products.filter(p=>p.category_id===c.id);
     const hasan=/çiğ\s*k[öo]fte/i.test(c.name);
     const kafe=/kafe\s*&\s*mant[ıi]/i.test(c.name);
-    return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''}" id="cat-${c.id}" style="display:none">
+    const cold=/soğuk\s*içecekler/i.test(c.name);
+    const hot=/sıcak\s*içecekler/i.test(c.name);
+    return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''}" id="cat-${c.id}" style="display:none">
       <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
-      <h1>${esc(c.name)}</h1><p>${esc(c.description||"")}</p></div>
+      ${hasan||kafe?"":`<h1>${esc(c.name)}</h1>`}${hasan||kafe?"":`<p>${esc(c.description||"")}</p>`}${kafe?`<p class="kafe-subtitle">${esc(c.description||"")}</p>`:""}</div>
       ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
     </section>`;
   }).join("");
