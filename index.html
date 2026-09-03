@@ -259,27 +259,82 @@ body.category-view footer{display:none}
 .category-section.cold-theme .price{color:#2f6558;}
 .category-section.cold-theme .photo{background:#e3f0eb;}
 
-/* Sıcak İçecekler: sıcak krem / kahve tonları */
+/* V5 — Sıcak İçecekler: kahvehane / 70'ler kahve tonları */
 .category-section.hot-theme .hero{
-  background:linear-gradient(135deg,#fff3df,#fffaf2 52%,#f4e5cf);
-  border-color:#594333;
-  box-shadow:0 5px 0 #59433320;
+  padding:26px 22px 24px;
+  background:
+    radial-gradient(circle at 18% 25%, #c49a4330 0 3px, transparent 4px),
+    radial-gradient(circle at 82% 72%, #7b4b2d18 0 4px, transparent 5px),
+    linear-gradient(135deg,#f7e5c8 0%,#fffaf2 48%,#ead5b8 100%);
+  border:2px solid #594333;
+  border-radius:24px;
+  box-shadow:0 6px 0 #59433320;
+}
+.category-section.hot-theme .hero:before{
+  content:"☕";
+  position:absolute;
+  left:20px;
+  bottom:10px;
+  font-size:42px;
+  opacity:.16;
+  transform:rotate(-8deg);
 }
 .category-section.hot-theme .hero:after{
-  border-color:#c49a43;
-  opacity:.75;
+  width:118px;height:118px;
+  right:-36px;top:-36px;
+  border:17px solid #c49a43;
+  opacity:.72;
 }
-.category-section.hot-theme .hero h1{color:#7b4b2d;font-size:30px;}
-.category-section.hot-theme .hero p{color:#765f4e;}
-.category-section.hot-theme .card{border-color:#594333;}
-.category-section.hot-theme .price{color:#8a4d28;}
-.category-section.hot-theme .photo{background:#f1dfc7;}
+.category-section.hot-theme .hero h1{
+  position:relative;
+  z-index:1;
+  margin:0 0 8px;
+  color:#7b4b2d;
+  font-size:34px;
+  letter-spacing:.4px;
+}
+.category-section.hot-theme .hero h1:after{
+  content:"✦  ☕  ✦";
+  display:block;
+  margin-top:9px;
+  color:#c49a43;
+  font-size:13px;
+  letter-spacing:4px;
+}
+.category-section.hot-theme .hero p{
+  position:relative;
+  z-index:1;
+  margin:0;
+  color:#765f4e;
+  font-size:14px;
+}
+.category-section.hot-theme .card{
+  border-color:#594333;
+  background:#fffaf2;
+  box-shadow:0 5px 0 #59433318;
+}
+.category-section.hot-theme .photo{
+  background:#f1dfc7;
+}
+.category-section.hot-theme .price{
+  color:#8a4d28;
+  border-color:#8a4d28;
+  background:#fff4e7;
+}
+.category-section.hot-theme .weight{
+  color:#76552e;
+  border-color:#c49a43;
+  background:#f7ead5;
+}
 
 @media(max-width:520px){
   .category-section.hasan-theme .hero{padding:11px 12px 13px;}
   .category-section.hasan-theme .section-logo{width:245px;max-width:92%;}
   .category-section.kafe-theme .kafe-ribbon{font-size:14px;padding:7px 13px;}
-  .category-section.cold-theme .hero h1,.category-section.hot-theme .hero h1{font-size:26px;}
+  .category-section.cold-theme .hero h1{font-size:26px;}
+  .category-section.hot-theme .hero{padding:21px 16px 20px;}
+  .category-section.hot-theme .hero h1{font-size:29px;}
+  .category-section.hot-theme .hero:before{font-size:34px;left:13px;bottom:7px;}
 }
 
 </style>
