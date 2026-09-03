@@ -494,6 +494,79 @@ body.category-view footer{display:none}
   }
 }
 
+
+/* V5 — SOĞUK İÇECEKLER: 70'ler gazoz / büfe retro kimliği */
+.category-section.cold-theme{position:relative;padding-top:4px}
+.category-section.cold-theme:before{
+  content:"";position:absolute;left:-20px;right:-20px;top:0;height:16px;
+  background:repeating-linear-gradient(90deg,#275d55 0 18px,#e8c86e 18px 36px,#fff4df 36px 54px);
+  border-top:2px solid #214b45;border-bottom:2px solid #214b45;border-radius:8px;
+}
+.category-section.cold-theme .hero{
+  margin-top:18px;min-height:210px;padding:42px 28px 30px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 28%,#f3c85f66 0 4px,transparent 5px),
+    radial-gradient(circle at 87% 68%,#fff7e088 0 5px,transparent 6px),
+    radial-gradient(circle at 76% 18%,#e96d6355 0 3px,transparent 4px),
+    repeating-linear-gradient(135deg,#ffffff0b 0 12px,#00000008 12px 24px),
+    linear-gradient(135deg,#2c6a61 0%,#34786d 42%,#e9c96e 42%,#f7e4b5 58%,#2c6a61 100%);
+  border:4px solid #214b45;border-radius:30px;
+  box-shadow:0 9px 0 #214b4545,inset 0 0 0 6px #fff4df55,inset 0 0 0 9px #e5bd5a66;
+}
+.category-section.cold-theme .hero:before{
+  content:"";position:absolute;width:145px;height:145px;left:-48px;bottom:-58px;
+  border:21px solid #e7c15e;opacity:.75;border-radius:50%;
+  box-shadow:0 0 0 7px #fff4df33;
+}
+.category-section.cold-theme .hero:after{
+  width:145px;height:145px;right:-43px;top:-48px;
+  border:21px solid #e7c15e;opacity:.82;box-shadow:0 0 0 7px #fff4df33;
+}
+.category-section.cold-theme .hero h1{
+  position:relative;z-index:2;margin:0;color:#fff7e8!important;
+  text-transform:uppercase;font-family:Georgia,"Times New Roman",serif;
+  font-size:43px!important;letter-spacing:2px!important;
+  text-shadow:3px 3px 0 #214b45,0 0 12px #214b4566;
+}
+.category-section.cold-theme .hero h1:after{
+  content:"✦  ───  🥤  ───  ✦";display:block;margin-top:10px;
+  color:#f1cf70;font-size:15px;letter-spacing:3px;text-shadow:none;
+}
+.category-section.cold-theme .hero p{display:none!important}
+.category-section.cold-theme .grid{position:relative;margin-top:28px;gap:20px}
+.category-section.cold-theme .card{
+  position:relative;border:3px solid #214b45;border-radius:20px;
+  background:#fff9ed;box-shadow:0 8px 0 #214b4533,inset 0 0 0 4px #e5c76a55;
+}
+.category-section.cold-theme .card:before{
+  content:"70'LER";position:absolute;z-index:4;left:14px;top:14px;
+  padding:5px 10px;background:#2c6a61;color:#fff4df;
+  border:2px solid #e5bd5a;border-radius:3px;font-size:10px;font-weight:900;letter-spacing:1.5px;
+}
+.category-section.cold-theme .photo{
+  aspect-ratio:1.22/1;background:#dceee8;border-bottom:3px solid #214b45;
+}
+.category-section.cold-theme .photo img{transition:transform .3s ease,filter .3s ease}
+.category-section.cold-theme .card:hover .photo img{transform:scale(1.045);filter:saturate(1.08)}
+.category-section.cold-theme .card-body{
+  background:linear-gradient(180deg,#fff9ed,#eaf3ed);padding:16px 17px 18px;
+}
+.category-section.cold-theme .product-title-row h3{color:#275d55!important;font-size:22px!important}
+.category-section.cold-theme .price{
+  color:#fff9ed!important;background:#2c6a61!important;border:2px solid #214b45!important;
+  box-shadow:3px 3px 0 #e0b957!important;border-radius:4px!important;
+}
+.category-section.cold-theme .desc{color:#58766d!important}
+.category-section.cold-theme .weight{background:#e9f1ec!important;color:#275d55!important;border-color:#d1aa4e!important}
+.category-section.cold-theme .empty{border:2px dashed #2c6a61;background:#fff9ed;color:#275d55}
+@media(max-width:520px){
+  .category-section.cold-theme:before{left:-8px;right:-8px}
+  .category-section.cold-theme .hero{min-height:185px;padding:40px 14px 24px;margin-top:15px}
+  .category-section.cold-theme .hero h1{font-size:31px!important;letter-spacing:1.2px!important}
+}
+
 </style>
 </head>
 <body>
