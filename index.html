@@ -126,6 +126,11 @@ body.category-view footer{display:none}
   .product-title-row h3{font-size:18px}
   .product-card .price{font-size:14px}
 }
+
+.product-name-wrap{min-width:0}
+.weight{display:inline-block;margin-top:5px;padding:3px 8px;border-radius:999px;background:#f1e4cf;border:1px solid #c7a66c;color:#795d2d;font-size:11px;font-weight:700;letter-spacing:.2px}
+.admin-form-note{font-size:12px;color:#756a60;margin-top:-4px}
+@media(max-width:520px){.product-title-row{gap:8px}.weight{font-size:10px}}
 </style>
 </head>
 <body>
@@ -183,9 +188,10 @@ body.category-view footer{display:none}
       <label>Ürün adı<input id="pName" required></label>
       <label>Açıklama<textarea id="pDesc" placeholder="Ürünün kısa açıklaması"></textarea></label>
       <div class="row">
-        <label>Fiyat (TL)<input id="pPrice" type="number" step="0.01" min="0"></label>
-        <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
+        <label>Fiyat (TL)<input id="pPrice" type="number" step="0.01" min="0" placeholder="Örn. 115"></label>
+        <label>Gramaj<input id="pWeight" type="text" placeholder="Örn. 100 g"></label>
       </div>
+      <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
       <label>Kategori<select id="pCategory" required></select></label>
       <label>Fotoğraf<input id="pImage" type="file" accept="image/*"></label>
       <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
@@ -270,7 +276,10 @@ function productCard(p){
     </div>
     <div class="card-body">
       <div class="product-title-row">
-        <h3>${esc(p.name)}</h3>
+        <div class="product-name-wrap">
+          <h3>${esc(p.name)}</h3>
+          ${p.weight?`<span class="weight">${esc(p.weight)}</span>`:""}
+        </div>
         <span class="price">${price}</span>
       </div>
       ${p.description?`<div class="desc">${esc(p.description)}</div>`:`<div class="desc empty-desc">Lezzetimizi keşfedin.</div>`}
@@ -292,13 +301,13 @@ async function loadAdmin(){
 function adminItem(p){
   const cat=categories.find(c=>c.id===p.category_id);
   return `<div class="item">${p.image_url?`<img class="thumb" src="${escAttr(p.image_url)}">`:'<div class="thumb"></div>'}
-  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")} · ${p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
+  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")} · ${p.weight?esc(p.weight)+" · ":""}${p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
   <span class="pill">${p.is_active?"Aktif":"Gizli"}</span>
   <div class="actions"><button class="btn secondary" onclick="editProduct(${p.id})">Düzenle</button><button class="btn danger" onclick="deleteProduct(${p.id})">Sil</button></div></div>`;
 }
-function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pSort.value="0";pActive.checked=true;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 function closeProductForm(){productFormPanel.style.display="none";}
-function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;pActive.checked=!!p.is_active;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;pActive.checked=!!p.is_active;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveProduct(e){
   e.preventDefault();saveMsg.textContent="Kaydediliyor...";
   let imageUrl=null;
@@ -310,7 +319,7 @@ async function saveProduct(e){
     if(up.error){saveMsg.textContent="Fotoğraf yüklenemedi: "+up.error.message;return}
     imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
   }
-  const payload={category_id:Number(pCategory.value),name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
+  const payload={category_id:Number(pCategory.value),name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,sort_order:Number(pSort.value)||0,is_active:pActive.checked};
   if(imageUrl)payload.image_url=imageUrl;
   const id=productId.value;
   const res=id?await sb.from("products").update(payload).eq("id",id):await sb.from("products").insert(payload);
