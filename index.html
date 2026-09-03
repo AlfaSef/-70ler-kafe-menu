@@ -567,6 +567,27 @@ body.category-view footer{display:none}
   .category-section.cold-theme .hero h1{font-size:31px!important;letter-spacing:1.2px!important}
 }
 
+
+/* SOĞUK İÇECEKLER BAŞLIK OKUNABİLİRLİK DÜZELTMESİ */
+.cold-hero h2, .cold-hero .section-title, .cold-hero .category-title {
+  color: #fff7dc !important;
+  text-shadow: 0 2px 0 #173f3a, 0 4px 8px rgba(0,0,0,.45) !important;
+  -webkit-text-stroke: 0 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  background: transparent !important;
+}
+.cold-hero {
+  overflow: visible !important;
+}
+@media (max-width: 600px) {
+  .cold-hero h2, .cold-hero .section-title, .cold-hero .category-title {
+    font-size: clamp(30px, 10vw, 46px) !important;
+    line-height: 1.05 !important;
+    letter-spacing: .02em !important;
+    white-space: normal !important;
+  }
+}
 </style>
 </head>
 <body>
