@@ -131,6 +131,62 @@ body.category-view footer{display:none}
 .weight{display:inline-block;margin-top:5px;padding:3px 8px;border-radius:999px;background:#f1e4cf;border:1px solid #c7a66c;color:#795d2d;font-size:11px;font-weight:700;letter-spacing:.2px}
 .admin-form-note{font-size:12px;color:#756a60;margin-top:-4px}
 @media(max-width:520px){.product-title-row{gap:8px}.weight{font-size:10px}}
+
+.category-section.kafe-theme .hero{
+  background:linear-gradient(145deg,#fffaf2 0%,#f9edf3 55%,#edf5f0 100%);
+  border-color:#2d2824;
+}
+.category-section.kafe-theme .hero h1{
+  color:#b34f78;
+  font-size:34px;
+}
+.category-section.kafe-theme .hero:after{border-color:#a9c4b4}
+.category-section.kafe-theme .hero p{color:#5f574f}
+.category-section.kafe-theme .card{
+  background:#fffaf2;
+  border-color:#2d2824;
+  box-shadow:0 5px 0 #2d282418;
+}
+.category-section.kafe-theme .photo{background:#e9eee8}
+.category-section.kafe-theme .photo-stamp{
+  color:#b34f78;
+  border-color:#b34f78;
+  background:#fffaf2e8;
+}
+.category-section.kafe-theme .price{
+  color:#b34f78;
+  border-color:#b34f78;
+  background:#fff4f8;
+}
+.category-section.kafe-theme .weight{
+  color:#557a6a;
+  border-color:#a9c4b4;
+  background:#edf5f0;
+}
+.kafe-ribbon{
+  display:inline-block;
+  margin-bottom:9px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#a9c4b4;
+  border:1.5px solid #2d2824;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#2d2824;
+}
+@media(max-width:520px){
+  .category-section.kafe-theme .hero h1{font-size:29px}
+}
+
+.category-section.kafe-theme .hero h1:after{
+  content:"✦  ✦  ✦";
+  display:block;
+  margin-top:9px;
+  font-size:11px;
+  letter-spacing:5px;
+  color:#a9c4b4;
+}
 </style>
 </head>
 <body>
@@ -238,8 +294,9 @@ function renderMenu(){
   menu.innerHTML=categories.map(c=>{
     const arr=products.filter(p=>p.category_id===c.id);
     const hasan=/çiğ\s*k[öo]fte/i.test(c.name);
-    return `<section class="category-section ${hasan?'hasan-theme':''}" id="cat-${c.id}" style="display:none">
-      <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:""}
+    const kafe=/kafe\s*&\s*mant[ıi]/i.test(c.name);
+    return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''}" id="cat-${c.id}" style="display:none">
+      <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       <h1>${esc(c.name)}</h1><p>${esc(c.description||"")}</p></div>
       ${arr.length?`<div class="grid">${arr.map(productCard).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
     </section>`;
