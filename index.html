@@ -298,7 +298,7 @@ function renderMenu(){
     return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''}" id="cat-${c.id}" style="display:none">
       <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       <h1>${esc(c.name)}</h1><p>${esc(c.description||"")}</p></div>
-      ${arr.length?`<div class="grid">${arr.map(productCard).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
+      ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
     </section>`;
   }).join("");
   showHome();
@@ -324,12 +324,12 @@ function openCategory(id){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function scrollToCat(id,btn){openCategory(id);}
-function productCard(p){
+function productCard(p,hasan){
   const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
   return `<article class="card product-card">
     <div class="photo product-photo">
       ${p.image_url?`<img src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" loading="lazy">`:`<div class="photo-placeholder">Fotoğraf<br>eklenmemiş</div>`}
-      <span class="photo-stamp">HASAN USTA</span>
+      ${hasan?`<span class="photo-stamp">HASAN USTA</span>`:""}
     </div>
     <div class="card-body">
       <div class="product-title-row">
