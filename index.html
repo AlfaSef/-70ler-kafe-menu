@@ -588,6 +588,41 @@ body.category-view footer{display:none}
     white-space: normal !important;
   }
 }
+
+/* FINAL — Kategori başlıkları */
+.category-section.hasan-theme .hero{
+  background:linear-gradient(135deg,#fff4e3 0%,#f8e8d0 48%,#efe0c8 100%);
+  border:3px solid #8f1f1b;
+  box-shadow:0 6px 0 #8f1f1b22, inset 0 0 0 4px #c49a4355;
+  padding:16px 18px 15px;
+}
+.category-section.hasan-theme .section-logo{width:285px;max-width:92%;margin:0 auto 7px}
+.category-section.hasan-theme .hasan-title{
+  position:relative;z-index:2;display:inline-block;margin:0 auto;padding:7px 18px 6px;
+  background:#9f2d2d;color:#fff7e8;border:2px solid #c49a43;border-radius:5px;
+  font-size:22px;font-weight:900;letter-spacing:2px;text-shadow:1px 1px 0 #5c1714;
+  box-shadow:3px 3px 0 #5c1714;line-height:1;
+}
+.category-section.hasan-theme .hero:after{border-color:#c49a43;opacity:.8}
+.category-section.kafe-theme .hero{
+  background:linear-gradient(135deg,#fff7f5 0%,#f9e9f0 48%,#eef6f1 100%);
+  border:3px solid #b34f78;
+  box-shadow:0 6px 0 #b34f7822,inset 0 0 0 4px #a9c4b455;
+  padding:26px 18px 24px;
+}
+.category-section.kafe-theme .kafe-ribbon{
+  display:inline-block!important;padding:11px 22px 10px!important;
+  background:#d65c8a!important;color:#fffaf2!important;border:2px solid #7e3556!important;
+  border-radius:5px!important;font-size:24px!important;font-weight:900!important;
+  letter-spacing:1.4px!important;line-height:1.05!important;text-shadow:2px 2px 0 #7e3556!important;
+  box-shadow:4px 4px 0 #7e3556!important;
+}
+.category-section.kafe-theme .hero:after{border-color:#a9c4b4;opacity:.9}
+@media(max-width:520px){
+ .category-section.hasan-theme .section-logo{width:250px;max-width:94%}
+ .category-section.hasan-theme .hasan-title{font-size:19px;padding:7px 15px 6px}
+ .category-section.kafe-theme .kafe-ribbon{font-size:20px!important;padding:10px 15px 9px!important;letter-spacing:1px!important}
+}
 </style>
 </head>
 <body>
@@ -700,7 +735,7 @@ function renderMenu(){
     const cold=cname.includes("soğuk") && cname.includes("içecek");
     const hot=cname.includes("sıcak") && cname.includes("içecek");
     return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''}" id="cat-${c.id}" style="display:none">
-      <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta">`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
+      <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta"><div class="hasan-title">ÇİĞ KÖFTE</div>`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       ${hasan||kafe?"":`<h1>${esc(c.name)}</h1>`}${hasan||kafe?"":`<p>${esc(c.description||"")}</p>`}${kafe?`<p class="kafe-subtitle">${esc(c.description||"")}</p>`:""}</div>
       ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
     </section>`;
