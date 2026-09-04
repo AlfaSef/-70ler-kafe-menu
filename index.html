@@ -961,7 +961,7 @@ body.category-view footer{display:none}
         <div class="muted" style="margin-top:7px">Örnek: Az Porsiyon — 90 TL — Pilav 150 g — Tavuk 60 g</div>
       </div>
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
-      <label>Kategori<select id="pCategory" required onchange="updateSubcategoryField()"></select></label>
+      <label>Kategori<select id="pCategory" required onchange="populateSubcategories()"></select></label>
       <label id="subcategoryField" style="display:none">Alt Kategori<select id="pSubcategory"></select><span class="admin-form-note">Kafe & Mantı ürününü aşağıdaki bölümlerden birine yerleştir.</span></label>
       <label>Fotoğraf<input id="pImage" type="file" accept="image/*"></label>
       <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
@@ -1004,6 +1004,7 @@ function renderMenu(){
   const icons={"Çiğ Köfte":"🌿","Kafe & Mantı":"🍝","Soğuk İçecekler":"🥤","Sıcak İçecekler":"☕","Tatlılar":"🍰"};
   const short={"Çiğ Köfte":"Dürümler & porsiyonlar","Kafe & Mantı":"Ev yapımı lezzetler","Soğuk İçecekler":"Serinleten seçimler","Sıcak İçecekler":"Sıcak keyifler","Tatlılar":"Tatlı molalar"};
   const kafeSubcats=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar"];
+  const hasanSubcats=["Çiğ Köfte Porsiyonları","Çiğ Köfte Dürümler"];
   home.innerHTML=categories.map(c=>`<button class="category-card" onclick="openCategory('${c.id}')"><span class="shape"></span><span class="icon">${icons[c.name]||"✦"}</span><h3>${esc(c.name)}</h3><p>${esc(short[c.name]||c.description||"Menüyü keşfet")}</p></button>`).join("");
   nav.innerHTML=`<button onclick="showHome()">← Ana Sayfa</button>`+categories.map(c=>`<button data-cat="${c.id}" onclick="openCategory('${c.id}')">${esc(c.name)}</button>`).join("");
   menu.innerHTML=categories.map(c=>{
@@ -1015,15 +1016,16 @@ function renderMenu(){
     const hot=cname.includes("sıcak") && cname.includes("içecek");
     const dessert=cname === "tatlılar" || cname.includes("tatlılar");
     let content="";
-    if(kafe){
-      const activeSubs=kafeSubcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub));
-      const subnav=activeSubs.length?`<div class="kafe-subnav">${activeSubs.map(sub=>`<a href="#sub-${c.id}-${kafeSubcats.indexOf(sub)}">${esc(sub)}</a>`).join("")}</div>`:"";
-      const groups=kafeSubcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub)).map((sub,idx)=>{
+    if(kafe || hasan){
+      const subcats=kafe?kafeSubcats:hasan?hasanSubcats:[];
+      const activeSubs=subcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub));
+      const subnav=activeSubs.length?`<div class="kafe-subnav category-subnav">${activeSubs.map(sub=>`<a href="#sub-${c.id}-${subcats.indexOf(sub)}">${esc(sub)}</a>`).join("")}</div>`:"";
+      const groups=subcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub)).map((sub,idx)=>{
         const group=arr.filter(p=>(p.subcategory||"").trim()===sub);
-        return `<section class="kafe-subsection" id="sub-${c.id}-${idx}"><h2 class="kafe-subsection-title"><span>${esc(sub)}</span></h2><div class="grid">${group.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`;
+        return `<section class="kafe-subsection category-subsection" id="sub-${c.id}-${idx}"><h2 class="kafe-subsection-title"><span>${esc(sub)}</span></h2><div class="grid">${group.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`;
       }).join("");
-      const uncategorized=arr.filter(p=>!kafeSubcats.includes((p.subcategory||"").trim()));
-      content=`${subnav}${groups}${uncategorized.length?`<section class="kafe-subsection"><h2 class="kafe-subsection-title"><span>Diğer</span></h2><div class="grid">${uncategorized.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`:""}${!arr.length?'<div class="empty">Henüz aktif ürün bulunmuyor.</div>':""}`;
+      const uncategorized=arr.filter(p=>!subcats.includes((p.subcategory||"").trim()));
+      content=`${subnav}${groups}${uncategorized.length?`<section class="kafe-subsection category-subsection"><h2 class="kafe-subsection-title"><span>Diğer</span></h2><div class="grid">${uncategorized.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`:""}${!arr.length?'<div class="empty">Henüz aktif ürün bulunmuyor.</div>':""}`;
     }else{
       content=arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>';
     }
@@ -1096,21 +1098,27 @@ async function checkSession(){if(!sb)return;const {data}=await sb.auth.getSessio
 async function login(e){e.preventDefault();const msg=document.getElementById("loginMsg");msg.textContent="Giriş yapılıyor...";const {error}=await sb.auth.signInWithPassword({email:email.value,password:password.value});if(error){msg.textContent=error.message;return}checkSession();}
 async function logout(){await sb.auth.signOut();checkSession();}
 const KAFE_SUBCATEGORIES=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar"];
-function isKafeCategoryId(id){
+const HASAN_SUBCATEGORIES=["Çiğ Köfte Porsiyonları","Çiğ Köfte Dürümler"];
+function getSubcategoriesForCategory(id){
   const c=categories.find(x=>String(x.id)===String(id));
   const n=(c?.name||"").toLocaleLowerCase("tr-TR");
-  return n.includes("kafe") && n.includes("mantı");
+  if(n.includes("kafe") && n.includes("mantı")) return KAFE_SUBCATEGORIES;
+  if(n.includes("çiğ köfte")) return HASAN_SUBCATEGORIES;
+  return [];
 }
 function updateSubcategoryField(){
   const field=document.getElementById("subcategoryField"), sel=document.getElementById("pSubcategory");
-  const show=isKafeCategoryId(pCategory.value);
+  const subs=getSubcategoriesForCategory(pCategory.value);
+  const show=subs.length>0;
   field.style.display=show?"block":"none";
   sel.required=show;
   if(!show)sel.value="";
+  else if(![...sel.options].some(o=>o.value===sel.value))sel.value="";
 }
 function populateSubcategories(selected=""){
   const sel=document.getElementById("pSubcategory");
-  sel.innerHTML=`<option value="">Alt kategori seçin</option>`+KAFE_SUBCATEGORIES.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
+  const subs=getSubcategoriesForCategory(pCategory.value);
+  sel.innerHTML=`<option value="">Alt kategori seçin</option>`+subs.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
   sel.value=selected||"";
   updateSubcategoryField();
 }
