@@ -893,6 +893,35 @@ body.category-view footer{display:none}
 .footer-brand{margin-bottom:10px!important;font-size:12px!important}
 @media(max-width:520px){.social-footer{padding-top:18px}.social-link{font-size:10px;padding:7px 10px}}
 
+
+/* Çiğ Köfte dürüm fiyat satırları: mobil kartın dışına taşmayı önle */
+.wrap-option{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:6px!important;
+  min-width:0!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+.wrap-option span{
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+  line-height:1.2!important;
+}
+.wrap-option strong{
+  flex:none!important;
+  min-width:0!important;
+  white-space:nowrap!important;
+  font-size:11px!important;
+  line-height:1.1!important;
+}
+@media(max-width:520px){
+  .wrap-options{gap:5px!important}
+  .wrap-option{padding:7px 7px!important;gap:4px!important;font-size:9.5px!important}
+  .wrap-option strong{font-size:9.5px!important}
+}
 </style>
 </head>
 <body>
