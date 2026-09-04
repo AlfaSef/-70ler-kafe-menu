@@ -589,6 +589,22 @@ body.category-view footer{display:none}
   }
 }
 
+
+/* TATLILAR — ayrı ana kategori */
+.category-section.dessert-theme .hero{
+  background:linear-gradient(135deg,#fff8f1 0%,#fde9ee 52%,#f7dfc8 100%);
+  border:3px solid #c45d82;
+  box-shadow:0 6px 0 #c45d8222,inset 0 0 0 4px #d9b27a55;
+  padding:20px 18px 18px;
+}
+.category-section.dessert-theme .hero h1{
+  color:#a43e67!important;
+  text-shadow:2px 2px 0 #fff8ef!important;
+  letter-spacing:2px;
+}
+.category-section.dessert-theme .hero p{color:#6f5149}
+.category-section.dessert-theme .hero:after{border-color:#d6a85c;opacity:.8}
+
 /* FINAL — Kategori başlıkları */
 .category-section.hasan-theme .hero{
   background:linear-gradient(135deg,#fff4e3 0%,#f8e8d0 48%,#efe0c8 100%);
@@ -733,7 +749,7 @@ body.category-view footer{display:none}
       </div>
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
       <label>Kategori<select id="pCategory" required onchange="updateSubcategoryField()"></select></label>
-      <label id="subcategoryField" style="display:none">Alt Kategori<select id="pSubcategory"></select><span class="admin-form-note">Kafe & Mantı ürününü aşağıdaki 7 bölümden birine yerleştir.</span></label>
+      <label id="subcategoryField" style="display:none">Alt Kategori<select id="pSubcategory"></select><span class="admin-form-note">Kafe & Mantı ürününü aşağıdaki bölümlerden birine yerleştir.</span></label>
       <label>Fotoğraf<input id="pImage" type="file" accept="image/*"></label>
       <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
       <div class="actions">
@@ -772,9 +788,9 @@ async function loadMenu(){
 }
 function renderMenu(){
   const nav=document.getElementById("categoryNav"), menu=document.getElementById("menu"), home=document.getElementById("homeCategories");
-  const icons={"Çiğ Köfte":"🌿","Kafe & Mantı":"🍝","Soğuk İçecekler":"🥤","Sıcak İçecekler":"☕"};
-  const short={"Çiğ Köfte":"Dürümler & porsiyonlar","Kafe & Mantı":"Ev yapımı lezzetler","Soğuk İçecekler":"Serinleten seçimler","Sıcak İçecekler":"Sıcak keyifler"};
-  const kafeSubcats=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar","Tatlılar"];
+  const icons={"Çiğ Köfte":"🌿","Kafe & Mantı":"🍝","Soğuk İçecekler":"🥤","Sıcak İçecekler":"☕","Tatlılar":"🍰"};
+  const short={"Çiğ Köfte":"Dürümler & porsiyonlar","Kafe & Mantı":"Ev yapımı lezzetler","Soğuk İçecekler":"Serinleten seçimler","Sıcak İçecekler":"Sıcak keyifler","Tatlılar":"Tatlı molalar"};
+  const kafeSubcats=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar"];
   home.innerHTML=categories.map(c=>`<button class="category-card" onclick="openCategory('${c.id}')"><span class="shape"></span><span class="icon">${icons[c.name]||"✦"}</span><h3>${esc(c.name)}</h3><p>${esc(short[c.name]||c.description||"Menüyü keşfet")}</p></button>`).join("");
   nav.innerHTML=`<button onclick="showHome()">← Ana Sayfa</button>`+categories.map(c=>`<button data-cat="${c.id}" onclick="openCategory('${c.id}')">${esc(c.name)}</button>`).join("");
   menu.innerHTML=categories.map(c=>{
@@ -784,6 +800,7 @@ function renderMenu(){
     const kafe=cname.includes("kafe") && cname.includes("mantı");
     const cold=cname.includes("soğuk") && cname.includes("içecek");
     const hot=cname.includes("sıcak") && cname.includes("içecek");
+    const dessert=cname === "tatlılar" || cname.includes("tatlılar");
     let content="";
     if(kafe){
       const activeSubs=kafeSubcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub));
@@ -797,7 +814,7 @@ function renderMenu(){
     }else{
       content=arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>';
     }
-    return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''}" id="cat-${c.id}" style="display:none">
+    return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''} ${dessert?'dessert-theme':''}" id="cat-${c.id}" style="display:none">
       <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta"><div class="hasan-title">ÇİĞ KÖFTE</div>`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       ${hasan||kafe?"":`<h1>${esc(c.name)}</h1>`}${hasan||kafe?"":`<p>${esc(c.description||"")}</p>`}${kafe?`<p class="kafe-subtitle">${esc(c.description||"")}</p>`:""}</div>
       ${content}
@@ -865,7 +882,7 @@ function showPublic(){document.getElementById("adminView").style.display="none";
 async function checkSession(){if(!sb)return;const {data}=await sb.auth.getSession();if(data.session){document.getElementById("loginPanel").style.display="none";document.getElementById("dashboard").style.display="block";loadAdmin()}else{document.getElementById("loginPanel").style.display="block";document.getElementById("dashboard").style.display="none";}}
 async function login(e){e.preventDefault();const msg=document.getElementById("loginMsg");msg.textContent="Giriş yapılıyor...";const {error}=await sb.auth.signInWithPassword({email:email.value,password:password.value});if(error){msg.textContent=error.message;return}checkSession();}
 async function logout(){await sb.auth.signOut();checkSession();}
-const KAFE_SUBCATEGORIES=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar","Tatlılar"];
+const KAFE_SUBCATEGORIES=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar"];
 function isKafeCategoryId(id){
   const c=categories.find(x=>String(x.id)===String(id));
   const n=(c?.name||"").toLocaleLowerCase("tr-TR");
