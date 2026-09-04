@@ -1158,7 +1158,7 @@ async function saveProduct(e){
       imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
     }
     saveMsg.textContent="Ürün bilgileri kaydediliyor...";
-    const payload={category_id:Number(pCategory.value),subcategory:isKafeCategoryId(pCategory.value)?(pSubcategory.value||null):null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
+    const payload={category_id:Number(pCategory.value),subcategory:pSubcategory.value||null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
     if(imageUrl)payload.image_url=imageUrl;
     const id=productId.value;
     const dbPromise=id?sb.from("products").update(payload).eq("id",id):sb.from("products").insert(payload);
