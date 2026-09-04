@@ -627,13 +627,16 @@ body.category-view footer{display:none}
 .portion-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .portion-option{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:1.5px solid #b98b52;border-radius:10px;background:#fffaf0;font-size:12px;font-weight:700;color:#4a3527}
 .portion-option strong{font-size:13px;color:#9b3f22;white-space:nowrap}
+.portion-option small{display:block;font-size:10px;font-weight:600;color:#765f4c;margin-top:3px;line-height:1.25}
 .portion-editor{border:1.5px dashed #c9a77b;border-radius:12px;padding:12px;background:#fffaf4;margin-top:4px}
 .portion-editor-title{font-weight:800;margin-bottom:8px}
-.portion-row{display:grid;grid-template-columns:1fr 130px auto;gap:8px;align-items:center;margin-bottom:8px}
+.portion-row{display:grid;grid-template-columns:1.1fr 120px 110px 110px auto;gap:8px;align-items:center;margin-bottom:8px}
 .portion-row input{min-width:0}
+.portion-row .portion-help{font-size:11px;color:#765f4c;margin:-4px 0 7px;grid-column:1/-1}
 .remove-portion{padding:9px 11px;border:0;border-radius:8px;background:#eee0d0;cursor:pointer;font-weight:700}
 .add-portion{margin-top:2px}
-@media(max-width:600px){.portion-row{grid-template-columns:1fr 105px auto}.portion-option{width:100%}}
+@media(max-width:700px){.portion-row{grid-template-columns:1fr 105px 95px 95px auto}}
+@media(max-width:520px){.portion-row{grid-template-columns:1fr 1fr;gap:7px}.portion-row .remove-portion{grid-column:2}.portion-option{width:100%}}
 </style>
 </head>
 <body>
@@ -696,9 +699,10 @@ body.category-view footer{display:none}
       </div>
       <div class="portion-editor">
         <div class="portion-editor-title">Porsiyon / Boy Seçenekleri <span class="muted">(İsteğe bağlı)</span></div>
+        <div class="muted" style="margin-bottom:8px">Her porsiyon için fiyatın yanında ayrı ayrı <b>pilav</b> ve <b>tavuk gramajı</b> girebilirsin. Müşteri bunları menüde görecek.</div>
         <div id="portionRows"></div>
         <button class="btn secondary add-portion" type="button" onclick="addPortionRow()">+ Porsiyon Ekle</button>
-        <div class="muted" style="margin-top:7px">Örnek: Az Porsiyon — 90 TL · 1 Porsiyon — 120 TL · 1,5 Porsiyon — 170 TL</div>
+        <div class="muted" style="margin-top:7px">Örnek: Az Porsiyon — 90 TL — Pilav 150 g — Tavuk 60 g</div>
       </div>
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
       <label>Kategori<select id="pCategory" required></select></label>
@@ -781,17 +785,17 @@ function openCategory(id){
 }
 function scrollToCat(id,btn){openCategory(id);}
 function formatPrice(v){return v==null?"Fiyat yok":Number(v).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL";}
-function addPortionRow(label="",price=""){
+function addPortionRow(label="",price="",riceWeight="",chickenWeight=""){
   const wrap=document.getElementById("portionRows"); if(!wrap)return;
   const row=document.createElement("div"); row.className="portion-row";
-  row.innerHTML=`<input class="portion-label" type="text" placeholder="Porsiyon adı" value="${escAttr(label)}"><input class="portion-price" type="number" step="0.01" min="0" placeholder="Fiyat" value="${price}"><button type="button" class="remove-portion" onclick="this.parentElement.remove()">Sil</button>`;
+  row.innerHTML=`<input class="portion-label" type="text" placeholder="Porsiyon adı" value="${escAttr(label)}"><input class="portion-price" type="number" step="0.01" min="0" placeholder="Fiyat (TL)" value="${price}"><input class="portion-rice-weight" type="text" placeholder="Pilav (g)" value="${escAttr(riceWeight)}"><input class="portion-chicken-weight" type="text" placeholder="Tavuk (g)" value="${escAttr(chickenWeight)}"><button type="button" class="remove-portion" onclick="this.parentElement.remove()">Sil</button>`;
   wrap.appendChild(row);
 }
 function getPortionOptions(){
-  return [...document.querySelectorAll("#portionRows .portion-row")].map(r=>({label:r.querySelector(".portion-label")?.value.trim(),price:r.querySelector(".portion-price")?.value===""?null:Number(r.querySelector(".portion-price")?.value)})).filter(o=>o.label && o.price!=null);
+  return [...document.querySelectorAll("#portionRows .portion-row")].map(r=>({label:r.querySelector(".portion-label")?.value.trim(),price:r.querySelector(".portion-price")?.value===""?null:Number(r.querySelector(".portion-price")?.value),rice_weight:r.querySelector(".portion-rice-weight")?.value.trim()||null,chicken_weight:r.querySelector(".portion-chicken-weight")?.value.trim()||null})).filter(o=>o.label && o.price!=null);
 }
 function setPortionOptions(options){
-  const wrap=document.getElementById("portionRows"); if(!wrap)return; wrap.innerHTML=""; (Array.isArray(options)?options:[]).forEach(o=>addPortionRow(o.label||"",o.price??""));
+  const wrap=document.getElementById("portionRows"); if(!wrap)return; wrap.innerHTML=""; (Array.isArray(options)?options:[]).forEach(o=>addPortionRow(o.label||"",o.price??"",o.rice_weight||"",o.chicken_weight||""));
 }
 function productCard(p,hasan,hot){
   const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
@@ -809,7 +813,7 @@ function productCard(p,hasan,hot){
         <span class="price">${price}</span>
       </div>
       ${p.description?`<div class="desc">${esc(p.description)}</div>`:`<div class="desc empty-desc">Lezzetimizi keşfedin.</div>`}
-      ${Array.isArray(p.portion_options)&&p.portion_options.length?`<div class="portion-options">${p.portion_options.map(o=>`<span class="portion-option">${esc(o.label)} <strong>${formatPrice(o.price)}</strong></span>`).join("")}</div>`:""}
+      ${Array.isArray(p.portion_options)&&p.portion_options.length?`<div class="portion-options">${p.portion_options.map(o=>`<span class="portion-option"><span>${esc(o.label)}${o.rice_weight||o.chicken_weight?`<small>${o.rice_weight?`Pilav: ${esc(o.rice_weight)}${/^\d/.test(String(o.rice_weight))?' g':''}`:""}${o.rice_weight&&o.chicken_weight?" · ":""}${o.chicken_weight?`Tavuk: ${esc(o.chicken_weight)}${/^\d/.test(String(o.chicken_weight))?' g':''}`:""}</small>`:""}</span><strong>${formatPrice(o.price)}</strong></span>`).join("")}</div>`:""}
     </div>
   </article>`;
 }
