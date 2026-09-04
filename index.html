@@ -637,6 +637,33 @@ body.category-view footer{display:none}
 .add-portion{margin-top:2px}
 @media(max-width:700px){.portion-row{grid-template-columns:1fr 105px 95px 95px auto}}
 @media(max-width:520px){.portion-row{grid-template-columns:1fr 1fr;gap:7px}.portion-row .remove-portion{grid-column:2}.portion-option{width:100%}}
+
+.kafe-subnav{display:flex;gap:8px;overflow:auto;padding:2px 0 12px;scrollbar-width:none}
+.kafe-subnav::-webkit-scrollbar{display:none}
+.kafe-subnav a{flex:0 0 auto;text-decoration:none;border:1.5px solid #8f5b70;background:#fffaf2;color:#6f3e55;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800;box-shadow:0 2px 0 #7e355622}
+.kafe-subnav a:hover{background:#f9dce8}
+.kafe-subsection{margin:14px 0 20px;scroll-margin-top:62px}
+.kafe-subsection-title{display:flex;align-items:center;gap:10px;margin:0 4px 9px;color:#7e3556}
+.kafe-subsection-title:before,.kafe-subsection-title:after{content:"";height:1.5px;background:#c58aa2;flex:1}
+.kafe-subsection-title span{display:inline-block;padding:6px 12px;border:1.5px solid #a85b7d;border-radius:999px;background:#fff8fb;font-size:18px;white-space:nowrap}
+.kafe-subsection .grid{margin:0}
+.subcategory-empty{padding:12px 14px;border:1px dashed #c9a7b6;border-radius:14px;color:#806a72;background:#fffafc;text-align:center;font-size:13px}
+@media(max-width:520px){
+  .category-section .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .category-section .card .photo,.product-photo{aspect-ratio:1.45/1;min-height:0}
+  .product-card .card-body{padding:9px 9px 10px}
+  .product-title-row{gap:5px}
+  .product-title-row h3{font-size:15px;line-height:1.12}
+  .product-card .price{font-size:11px;padding:4px 5px;border-radius:7px}
+  .product-card .desc{font-size:11px;line-height:1.25;margin-top:5px}
+  .weight{font-size:9px;padding:2px 5px;margin-top:3px}
+  .portion-options{gap:5px;margin-top:7px}
+  .portion-option{padding:6px 7px;border-radius:8px;font-size:10px;gap:5px}
+  .portion-option strong{font-size:10px}
+  .portion-option small{font-size:8.5px}
+  .kafe-subsection-title span{font-size:15px;padding:5px 10px}
+}
+@media(min-width:521px){.kafe-subnav{justify-content:center;flex-wrap:wrap}.kafe-subnav a{font-size:13px}}
 </style>
 </head>
 <body>
@@ -705,7 +732,8 @@ body.category-view footer{display:none}
         <div class="muted" style="margin-top:7px">Örnek: Az Porsiyon — 90 TL — Pilav 150 g — Tavuk 60 g</div>
       </div>
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
-      <label>Kategori<select id="pCategory" required></select></label>
+      <label>Kategori<select id="pCategory" required onchange="updateSubcategoryField()"></select></label>
+      <label id="subcategoryField" style="display:none">Alt Kategori<select id="pSubcategory"></select><span class="admin-form-note">Kafe & Mantı ürününü aşağıdaki 7 bölümden birine yerleştir.</span></label>
       <label>Fotoğraf<input id="pImage" type="file" accept="image/*"></label>
       <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
       <div class="actions">
@@ -746,6 +774,7 @@ function renderMenu(){
   const nav=document.getElementById("categoryNav"), menu=document.getElementById("menu"), home=document.getElementById("homeCategories");
   const icons={"Çiğ Köfte":"🌿","Kafe & Mantı":"🍝","Soğuk İçecekler":"🥤","Sıcak İçecekler":"☕"};
   const short={"Çiğ Köfte":"Dürümler & porsiyonlar","Kafe & Mantı":"Ev yapımı lezzetler","Soğuk İçecekler":"Serinleten seçimler","Sıcak İçecekler":"Sıcak keyifler"};
+  const kafeSubcats=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar","Tatlılar"];
   home.innerHTML=categories.map(c=>`<button class="category-card" onclick="openCategory('${c.id}')"><span class="shape"></span><span class="icon">${icons[c.name]||"✦"}</span><h3>${esc(c.name)}</h3><p>${esc(short[c.name]||c.description||"Menüyü keşfet")}</p></button>`).join("");
   nav.innerHTML=`<button onclick="showHome()">← Ana Sayfa</button>`+categories.map(c=>`<button data-cat="${c.id}" onclick="openCategory('${c.id}')">${esc(c.name)}</button>`).join("");
   menu.innerHTML=categories.map(c=>{
@@ -755,10 +784,23 @@ function renderMenu(){
     const kafe=cname.includes("kafe") && cname.includes("mantı");
     const cold=cname.includes("soğuk") && cname.includes("içecek");
     const hot=cname.includes("sıcak") && cname.includes("içecek");
+    let content="";
+    if(kafe){
+      const activeSubs=kafeSubcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub));
+      const subnav=activeSubs.length?`<div class="kafe-subnav">${activeSubs.map(sub=>`<a href="#sub-${c.id}-${kafeSubcats.indexOf(sub)}">${esc(sub)}</a>`).join("")}</div>`:"";
+      const groups=kafeSubcats.filter(sub=>arr.some(p=>(p.subcategory||"").trim()===sub)).map((sub,idx)=>{
+        const group=arr.filter(p=>(p.subcategory||"").trim()===sub);
+        return `<section class="kafe-subsection" id="sub-${c.id}-${idx}"><h2 class="kafe-subsection-title"><span>${esc(sub)}</span></h2><div class="grid">${group.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`;
+      }).join("");
+      const uncategorized=arr.filter(p=>!kafeSubcats.includes((p.subcategory||"").trim()));
+      content=`${subnav}${groups}${uncategorized.length?`<section class="kafe-subsection"><h2 class="kafe-subsection-title"><span>Diğer</span></h2><div class="grid">${uncategorized.map(p=>productCard(p,hasan,hot)).join("")}</div></section>`:""}${!arr.length?'<div class="empty">Henüz aktif ürün bulunmuyor.</div>':""}`;
+    }else{
+      content=arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>';
+    }
     return `<section class="category-section ${hasan?'hasan-theme':''} ${kafe?'kafe-theme':''} ${cold?'cold-theme':''} ${hot?'hot-theme':''}" id="cat-${c.id}" style="display:none">
       <div class="hero">${hasan?`<img class="section-logo" src="${logoHasan}" alt="Çiğ Köfteci Hasan Usta"><div class="hasan-title">ÇİĞ KÖFTE</div>`:kafe?`<span class="kafe-ribbon">70'LER KAFE & MANTI EVİ</span>`:""}
       ${hasan||kafe?"":`<h1>${esc(c.name)}</h1>`}${hasan||kafe?"":`<p>${esc(c.description||"")}</p>`}${kafe?`<p class="kafe-subtitle">${esc(c.description||"")}</p>`:""}</div>
-      ${arr.length?`<div class="grid">${arr.map(p=>productCard(p,hasan,hot)).join("")}</div>`:'<div class="empty">Henüz aktif ürün bulunmuyor.</div>'}
+      ${content}
     </section>`;
   }).join("");
   showHome();
@@ -823,22 +865,43 @@ function showPublic(){document.getElementById("adminView").style.display="none";
 async function checkSession(){if(!sb)return;const {data}=await sb.auth.getSession();if(data.session){document.getElementById("loginPanel").style.display="none";document.getElementById("dashboard").style.display="block";loadAdmin()}else{document.getElementById("loginPanel").style.display="block";document.getElementById("dashboard").style.display="none";}}
 async function login(e){e.preventDefault();const msg=document.getElementById("loginMsg");msg.textContent="Giriş yapılıyor...";const {error}=await sb.auth.signInWithPassword({email:email.value,password:password.value});if(error){msg.textContent=error.message;return}checkSession();}
 async function logout(){await sb.auth.signOut();checkSession();}
+const KAFE_SUBCATEGORIES=["Mantılar ve Makarnalar","Gözlemeler","Çi Börekler","Pilavlar","Aparatifler","Tostlar","Tatlılar"];
+function isKafeCategoryId(id){
+  const c=categories.find(x=>String(x.id)===String(id));
+  const n=(c?.name||"").toLocaleLowerCase("tr-TR");
+  return n.includes("kafe") && n.includes("mantı");
+}
+function updateSubcategoryField(){
+  const field=document.getElementById("subcategoryField"), sel=document.getElementById("pSubcategory");
+  const show=isKafeCategoryId(pCategory.value);
+  field.style.display=show?"block":"none";
+  sel.required=show;
+  if(!show)sel.value="";
+}
+function populateSubcategories(selected=""){
+  const sel=document.getElementById("pSubcategory");
+  sel.innerHTML=`<option value="">Alt kategori seçin</option>`+KAFE_SUBCATEGORIES.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
+  sel.value=selected||"";
+  updateSubcategoryField();
+}
+
 async function loadAdmin(){
   const c=await sb.from("categories").select("*").order("sort_order");const p=await sb.from("products").select("*").order("sort_order");
   if(c.error||p.error){alert("Veriler yüklenemedi.");return}categories=c.data||[];products=p.data||[];
   pCategory.innerHTML=categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+  populateSubcategories();
   adminProducts.innerHTML=products.map(adminItem).join("")||'<div class="muted">Henüz ürün yok.</div>';
 }
 function adminItem(p){
   const cat=categories.find(c=>c.id===p.category_id);
   return `<div class="item">${p.image_url?`<img class="thumb" src="${escAttr(p.image_url)}">`:'<div class="thumb"></div>'}
-  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")} · ${p.weight?esc(p.weight)+" · ":""}${Array.isArray(p.portion_options)&&p.portion_options.length?`${p.portion_options.length} porsiyon seçeneği`:p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
+  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")}${p.subcategory?` · ${esc(p.subcategory)}`:""} · ${p.weight?esc(p.weight)+" · ":""}${Array.isArray(p.portion_options)&&p.portion_options.length?`${p.portion_options.length} porsiyon seçeneği`:p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
   <span class="pill">${p.is_active?"Aktif":"Gizli"}</span>
   <div class="actions"><button class="btn secondary" onclick="editProduct(${p.id})">Düzenle</button><button class="btn danger" onclick="deleteProduct(${p.id})">Sil</button></div></div>`;
 }
-function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";setPortionOptions([]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";setPortionOptions([]);populateSubcategories();saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 function closeProductForm(){productFormPanel.style.display="none";}
-function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;pActive.checked=!!p.is_active;pImage.value="";setPortionOptions(p.portion_options||[]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;populateSubcategories(p.subcategory||"");pActive.checked=!!p.is_active;pImage.value="";setPortionOptions(p.portion_options||[]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveProduct(e){
   e.preventDefault();saveMsg.textContent="Kaydediliyor...";
   let imageUrl=null;
@@ -850,7 +913,7 @@ async function saveProduct(e){
     if(up.error){saveMsg.textContent="Fotoğraf yüklenemedi: "+up.error.message;return}
     imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
   }
-  const payload={category_id:Number(pCategory.value),name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
+  const payload={category_id:Number(pCategory.value),subcategory:isKafeCategoryId(pCategory.value)?(pSubcategory.value||null):null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
   if(imageUrl)payload.image_url=imageUrl;
   const id=productId.value;
   const res=id?await sb.from("products").update(payload).eq("id",id):await sb.from("products").insert(payload);
