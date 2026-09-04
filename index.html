@@ -623,6 +623,17 @@ body.category-view footer{display:none}
  .category-section.hasan-theme .hasan-title{font-size:19px;padding:7px 15px 6px}
  .category-section.kafe-theme .kafe-ribbon{font-size:20px!important;padding:10px 15px 9px!important;letter-spacing:1px!important}
 }
+
+.portion-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.portion-option{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:1.5px solid #b98b52;border-radius:10px;background:#fffaf0;font-size:12px;font-weight:700;color:#4a3527}
+.portion-option strong{font-size:13px;color:#9b3f22;white-space:nowrap}
+.portion-editor{border:1.5px dashed #c9a77b;border-radius:12px;padding:12px;background:#fffaf4;margin-top:4px}
+.portion-editor-title{font-weight:800;margin-bottom:8px}
+.portion-row{display:grid;grid-template-columns:1fr 130px auto;gap:8px;align-items:center;margin-bottom:8px}
+.portion-row input{min-width:0}
+.remove-portion{padding:9px 11px;border:0;border-radius:8px;background:#eee0d0;cursor:pointer;font-weight:700}
+.add-portion{margin-top:2px}
+@media(max-width:600px){.portion-row{grid-template-columns:1fr 105px auto}.portion-option{width:100%}}
 </style>
 </head>
 <body>
@@ -682,6 +693,12 @@ body.category-view footer{display:none}
       <div class="row">
         <label>Fiyat (TL)<input id="pPrice" type="number" step="0.01" min="0" placeholder="Örn. 115"></label>
         <label>Gramaj<input id="pWeight" type="text" placeholder="Örn. 100 g"></label>
+      </div>
+      <div class="portion-editor">
+        <div class="portion-editor-title">Porsiyon / Boy Seçenekleri <span class="muted">(İsteğe bağlı)</span></div>
+        <div id="portionRows"></div>
+        <button class="btn secondary add-portion" type="button" onclick="addPortionRow()">+ Porsiyon Ekle</button>
+        <div class="muted" style="margin-top:7px">Örnek: Az Porsiyon — 90 TL · 1 Porsiyon — 120 TL · 1,5 Porsiyon — 170 TL</div>
       </div>
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
       <label>Kategori<select id="pCategory" required></select></label>
@@ -763,6 +780,19 @@ function openCategory(id){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function scrollToCat(id,btn){openCategory(id);}
+function formatPrice(v){return v==null?"Fiyat yok":Number(v).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL";}
+function addPortionRow(label="",price=""){
+  const wrap=document.getElementById("portionRows"); if(!wrap)return;
+  const row=document.createElement("div"); row.className="portion-row";
+  row.innerHTML=`<input class="portion-label" type="text" placeholder="Porsiyon adı" value="${escAttr(label)}"><input class="portion-price" type="number" step="0.01" min="0" placeholder="Fiyat" value="${price}"><button type="button" class="remove-portion" onclick="this.parentElement.remove()">Sil</button>`;
+  wrap.appendChild(row);
+}
+function getPortionOptions(){
+  return [...document.querySelectorAll("#portionRows .portion-row")].map(r=>({label:r.querySelector(".portion-label")?.value.trim(),price:r.querySelector(".portion-price")?.value===""?null:Number(r.querySelector(".portion-price")?.value)})).filter(o=>o.label && o.price!=null);
+}
+function setPortionOptions(options){
+  const wrap=document.getElementById("portionRows"); if(!wrap)return; wrap.innerHTML=""; (Array.isArray(options)?options:[]).forEach(o=>addPortionRow(o.label||"",o.price??""));
+}
 function productCard(p,hasan,hot){
   const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
   return `<article class="card product-card">
@@ -779,6 +809,7 @@ function productCard(p,hasan,hot){
         <span class="price">${price}</span>
       </div>
       ${p.description?`<div class="desc">${esc(p.description)}</div>`:`<div class="desc empty-desc">Lezzetimizi keşfedin.</div>`}
+      ${Array.isArray(p.portion_options)&&p.portion_options.length?`<div class="portion-options">${p.portion_options.map(o=>`<span class="portion-option">${esc(o.label)} <strong>${formatPrice(o.price)}</strong></span>`).join("")}</div>`:""}
     </div>
   </article>`;
 }
@@ -797,13 +828,13 @@ async function loadAdmin(){
 function adminItem(p){
   const cat=categories.find(c=>c.id===p.category_id);
   return `<div class="item">${p.image_url?`<img class="thumb" src="${escAttr(p.image_url)}">`:'<div class="thumb"></div>'}
-  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")} · ${p.weight?esc(p.weight)+" · ":""}${p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
+  <div class="item-main"><b>${esc(p.name)}</b><span class="muted">${esc(cat?.name||"Kategori yok")} · ${p.weight?esc(p.weight)+" · ":""}${Array.isArray(p.portion_options)&&p.portion_options.length?`${p.portion_options.length} porsiyon seçeneği`:p.price!=null?p.price+" TL":"Fiyat yok"} · sıra ${p.sort_order||0}</span></div>
   <span class="pill">${p.is_active?"Aktif":"Gizli"}</span>
   <div class="actions"><button class="btn secondary" onclick="editProduct(${p.id})">Düzenle</button><button class="btn danger" onclick="deleteProduct(${p.id})">Sil</button></div></div>`;
 }
-function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";setPortionOptions([]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 function closeProductForm(){productFormPanel.style.display="none";}
-function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;pActive.checked=!!p.is_active;pImage.value="";saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;pActive.checked=!!p.is_active;pImage.value="";setPortionOptions(p.portion_options||[]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveProduct(e){
   e.preventDefault();saveMsg.textContent="Kaydediliyor...";
   let imageUrl=null;
@@ -815,7 +846,7 @@ async function saveProduct(e){
     if(up.error){saveMsg.textContent="Fotoğraf yüklenemedi: "+up.error.message;return}
     imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
   }
-  const payload={category_id:Number(pCategory.value),name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,sort_order:Number(pSort.value)||0,is_active:pActive.checked};
+  const payload={category_id:Number(pCategory.value),name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
   if(imageUrl)payload.image_url=imageUrl;
   const id=productId.value;
   const res=id?await sb.from("products").update(payload).eq("id",id):await sb.from("products").insert(payload);
