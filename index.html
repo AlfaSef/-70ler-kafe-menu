@@ -1141,23 +1141,38 @@ function newProduct(){productFormPanel.style.display="block";formTitle.textConte
 function closeProductForm(){productFormPanel.style.display="none";}
 function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;populateSubcategories(p.subcategory||"");pActive.checked=!!p.is_active;pImage.value="";setPortionOptions(p.portion_options||[]);saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveProduct(e){
-  e.preventDefault();saveMsg.textContent="Kaydediliyor...";
-  let imageUrl=null;
-  const file=pImage.files[0];
-  if(file){
-    const safe=file.name.toLowerCase().replace(/[^a-z0-9._-]+/g,"-");
-    const path=`${crypto.randomUUID()}-${safe}`;
-    const up=await sb.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});
-    if(up.error){saveMsg.textContent="Fotoğraf yüklenemedi: "+up.error.message;return}
-    imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  e.preventDefault();
+  const btn=e.submitter||document.querySelector('#productFormPanel button[type="submit"]');
+  if(btn)btn.disabled=true;
+  saveMsg.textContent="Kaydediliyor...";
+  try{
+    let imageUrl=null;
+    const file=pImage.files[0];
+    if(file){
+      saveMsg.textContent="Fotoğraf yükleniyor...";
+      const safe=file.name.toLowerCase().replace(/[^a-z0-9._-]+/g,"-");
+      const path=`${crypto.randomUUID()}-${safe}`;
+      const uploadPromise=sb.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});
+      const up=await Promise.race([uploadPromise,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Fotoğraf yükleme zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")),30000))]);
+      if(up.error)throw new Error("Fotoğraf yüklenemedi: "+up.error.message);
+      imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+    }
+    saveMsg.textContent="Ürün bilgileri kaydediliyor...";
+    const payload={category_id:Number(pCategory.value),subcategory:isKafeCategoryId(pCategory.value)?(pSubcategory.value||null):null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
+    if(imageUrl)payload.image_url=imageUrl;
+    const id=productId.value;
+    const dbPromise=id?sb.from("products").update(payload).eq("id",id):sb.from("products").insert(payload);
+    const res=await Promise.race([dbPromise,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Veritabanı yanıt vermedi. Sayfayı yenileyip tekrar deneyin.")),20000))]);
+    if(res.error)throw new Error(res.error.message);
+    saveMsg.textContent="Kaydedildi.";
+    await Promise.all([loadAdmin(),loadMenu()]);
+    closeProductForm();
+  }catch(err){
+    console.error("saveProduct error",err);
+    saveMsg.textContent="Kaydedilemedi: "+(err?.message||"Bilinmeyen hata");
+  }finally{
+    if(btn)btn.disabled=false;
   }
-  const payload={category_id:Number(pCategory.value),subcategory:isKafeCategoryId(pCategory.value)?(pSubcategory.value||null):null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
-  if(imageUrl)payload.image_url=imageUrl;
-  const id=productId.value;
-  const res=id?await sb.from("products").update(payload).eq("id",id):await sb.from("products").insert(payload);
-  if(res.error){saveMsg.textContent="Kaydedilemedi: "+res.error.message;return}
-  saveMsg.textContent="Kaydedildi.";
-  await loadAdmin();closeProductForm();loadMenu();
 }
 async function deleteProduct(id){const p=products.find(x=>x.id===id);if(!confirm(`"${p?.name||"Bu ürün"}" silinsin mi?`))return;const {error}=await sb.from("products").delete().eq("id",id);if(error){alert(error.message);return}loadAdmin();loadMenu();}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
