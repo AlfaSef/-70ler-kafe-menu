@@ -1006,8 +1006,7 @@ body.category-view footer{display:none}
       <label>Sıra<input id="pSort" type="number" step="1" value="0"></label>
       <label>Kategori<select id="pCategory" required onchange="populateSubcategories()"></select></label>
       <label id="subcategoryField" style="display:none">Alt Kategori<select id="pSubcategory"></select><span class="admin-form-note">Kafe & Mantı ürününü aşağıdaki bölümlerden birine yerleştir.</span></label>
-      <label>Fotoğraf<input id="pImage" type="file" accept="image/*"></label>
-      <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
+            <label><input id="pActive" type="checkbox" checked> Ürün aktif ve müşteriye görünsün</label>
       <div class="actions">
         <button class="btn" type="submit">Kaydet</button>
         <button class="btn secondary" type="button" onclick="closeProductForm()">İptal</button>
@@ -1153,9 +1152,19 @@ function setWrapOptions(options){
 }
 function productCard(p,hasan,hot){
   const price=p.price!=null?Number(p.price).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL":"Fiyat bilgisi";
+  const displayImageUrl = (() => {
+    const n = String(p.name||"").trim().toLocaleLowerCase("tr-TR");
+    if(n === "pesto soslu makarna") return "https://images.70lerkafe.com/products/PESTO%20SOSLU%20MAKARNA%20KARE.png";
+    if(n === "üçgen mantı") return "https://images.70lerkafe.com/products/sinop%20mantı.png";
+    if(n.includes("çi börek") || n.includes("çibörek")) return "https://images.70lerkafe.com/products/çi%20börek.png";
+    const cat = categories.find(c=>String(c.id)===String(p.category_id));
+    const catName = String(cat?.name||"").trim().toLocaleLowerCase("tr-TR");
+    if(catName.includes("kampanyalı menüler")) return "";
+    return p.image_url || "";
+  })();
   return `<article class="card product-card">
     <div class="photo product-photo">
-      ${p.image_url?`<img src="${escAttr(p.image_url)}" alt="${escAttr(p.name)}" loading="lazy">`:`<div class="photo-placeholder">Fotoğraf<br>eklenmemiş</div>`}
+      ${displayImageUrl?`<img src="${escAttr(displayImageUrl)}" alt="${escAttr(p.name)}" loading="lazy">`:`<div class="photo-placeholder">Fotoğraf<br>eklenmemiş</div>`}
       ${hasan?`<span class="photo-stamp">HASAN USTA</span>`:""}
     </div>
     <div class="card-body">
@@ -1243,29 +1252,17 @@ function adminItem(p){
   <span class="pill">${p.is_active?"Aktif":"Gizli"}</span>
   <div class="actions"><button class="btn secondary" onclick="editProduct(${p.id})">Düzenle</button><button class="btn danger" onclick="deleteProduct(${p.id})">Sil</button></div></div>`;
 }
-function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;pImage.value="";setPortionOptions([]);setWrapOptions([]);populateSubcategories();updateWrapEditor();saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function newProduct(){productFormPanel.style.display="block";formTitle.textContent="Yeni Ürün";productId.value="";pName.value="";pDesc.value="";pPrice.value="";pWeight.value="";pSort.value="0";pActive.checked=true;setPortionOptions([]);setWrapOptions([]);populateSubcategories();updateWrapEditor();saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 function closeProductForm(){productFormPanel.style.display="none";}
-function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;populateSubcategories(p.subcategory||"");pActive.checked=!!p.is_active;pImage.value="";setPortionOptions(p.portion_options||[]);setWrapOptions(p.wrap_options||[]);updateWrapEditor();saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
+function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;productFormPanel.style.display="block";formTitle.textContent="Ürünü Düzenle";productId.value=p.id;pName.value=p.name;pDesc.value=p.description||"";pPrice.value=p.price??"";pWeight.value=p.weight||"";pSort.value=p.sort_order??0;pCategory.value=p.category_id;populateSubcategories(p.subcategory||"");pActive.checked=!!p.is_active;setPortionOptions(p.portion_options||[]);setWrapOptions(p.wrap_options||[]);updateWrapEditor();saveMsg.textContent="";window.scrollTo({top:0,behavior:"smooth"});}
 async function saveProduct(e){
   e.preventDefault();
   const btn=e.submitter||document.querySelector('#productFormPanel button[type="submit"]');
   if(btn)btn.disabled=true;
   saveMsg.textContent="Kaydediliyor...";
   try{
-    let imageUrl=null;
-    const file=pImage.files[0];
-    if(file){
-      saveMsg.textContent="Fotoğraf yükleniyor...";
-      const safe=file.name.toLowerCase().replace(/[^a-z0-9._-]+/g,"-");
-      const path=`${crypto.randomUUID()}-${safe}`;
-      const uploadPromise=sb.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});
-      const up=await Promise.race([uploadPromise,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Fotoğraf yükleme zaman aşımına uğradı. İnternet bağlantınızı kontrol edip tekrar deneyin.")),30000))]);
-      if(up.error)throw new Error("Fotoğraf yüklenemedi: "+up.error.message);
-      imageUrl=sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
-    }
-    saveMsg.textContent="Ürün bilgileri kaydediliyor...";
+saveMsg.textContent="Ürün bilgileri kaydediliyor...";
     const payload={category_id:Number(pCategory.value),subcategory:pSubcategory.value||null,name:pName.value.trim(),description:pDesc.value.trim()||null,price:pPrice.value===""?null:Number(pPrice.value),weight:pWeight.value.trim()||null,portion_options:getPortionOptions(),wrap_options:getWrapOptions(),sort_order:Number(pSort.value)||0,is_active:pActive.checked};
-    if(imageUrl)payload.image_url=imageUrl;
     const id=productId.value;
     const dbPromise=id?sb.from("products").update(payload).eq("id",id):sb.from("products").insert(payload);
     const res=await Promise.race([dbPromise,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Veritabanı yanıt vermedi. Sayfayı yenileyip tekrar deneyin.")),20000))]);
@@ -1285,7 +1282,7 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function escAttr(v){return esc(v);}
 init();
 </script>
-</body>
+\n<style id="pos-mobile-final-fix">\nhtml,body{overflow-x:hidden!important;max-width:100%!important}\n#posPanel.pos-shell{width:100vw!important;max-width:100vw!important;overflow:hidden!important}\n#posPanel .pos-app,#posPanel .pos-main{min-width:0!important;width:100%!important;max-width:100%!important}\n@media(max-width:600px){\n  #posPanel .pos-topbar{grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:0 10px!important}\n  #posPanel .pos-topbar-left{min-width:0!important;width:100%!important}\n  #posPanel .pos-topbar-left h1{font-size:19px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}\n  #posPanel .pos-top-search-wrap,#posPanel .pos-topbar-right{display:none!important}\n  #posPanel .pos-table-section{padding:8px 10px!important}\n  #posPanel .pos-table-grid{width:100%!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}\n  #posPanel .pos-table-card{min-width:0!important;width:100%!important;box-sizing:border-box!important}\n  #posPanel .pos-order-topbar{display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;padding:9px 10px 0!important}\n  #posPanel .pos-order-topbar .pos-selected-table{grid-column:1/-1!important;grid-row:1!important;font-size:15px!important}\n  #posPanel .pos-order-topbar .btn{grid-column:1!important;grid-row:2!important;min-width:0!important}\n  #posPanel .pos-order-topbar .pos-order-status{grid-column:2!important;grid-row:2!important;justify-self:end!important}\n  #posPanel .pos-workspace{display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding:0 10px 12px!important;gap:10px!important}\n  #posPanel .pos-products-panel,#posPanel .pos-ticket-panel{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}\n  #posPanel .pos-products-panel{min-height:0!important}\n  #posPanel .pos-product-grid{width:100%!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;max-height:420px!important;box-sizing:border-box!important}\n  #posPanel .pos-ticket-panel{height:auto!important;min-height:0!important}\n  #posPanel .ticket-actions{grid-template-columns:1fr!important}\n  #posPanel .print-btn{grid-column:auto!important}\n}\n</style>\n</body>
 </html><style>
 /* V9 — PREMIUM MODERN RETRO REDESIGN */
 :root{
