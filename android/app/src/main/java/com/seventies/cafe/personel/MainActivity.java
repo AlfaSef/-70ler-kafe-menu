@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://70lerkafe.com/personel.html?app=personel&v=20260918-3");
+        webView.loadUrl("https://70lerkafe.com/personel.html?app=personel&v=20260918-5");
     }
 
     @Override public void onBackPressed() {
