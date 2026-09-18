@@ -22,9 +22,11 @@ public class MainActivity extends Activity {
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
+        // Her APK açılışında GitHub/Cloudflare üzerindeki güncel personel arayüzünü al.
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://70lerkafe.com/personel.html");
+        webView.loadUrl("https://70lerkafe.com/personel.html?app=personel&v=20260918-3");
     }
 
     @Override public void onBackPressed() {
