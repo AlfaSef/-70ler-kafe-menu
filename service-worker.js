@@ -1,4 +1,4 @@
-const CACHE_NAME = "70ler-kafe-pwa-v5";
+const CACHE_NAME = "70ler-kafe-pwa-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -52,7 +52,7 @@ self.addEventListener("fetch", event => {
   // Sadece PWA'nın statik dosyaları için basit fallback.
   if (
     url.pathname.endsWith("/manifest.json") ||
-    url.pathname.endsWith("/pwa-icon-192.png") ||
+    url.pathname.endsWith("/pwa-icon-192.png") || url.pathname.endsWith("/apple-touch-icon.png") ||
     url.pathname.endsWith("/pwa-icon-512.png") ||
     url.pathname.endsWith("/service-worker.js")
   ) {
