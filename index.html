@@ -2749,7 +2749,7 @@ async function saveMyPOSProfile(){
   const r=await sb.from('pos_profiles').upsert({user_id:user.id,display_name:name,username,email:user.email||null,role:'admin',updated_at:new Date().toISOString()},{onConflict:'user_id'});if(r.error){alert(r.error.message);return;}const n=document.getElementById('posUserName');if(n)n.textContent=name;alert('POS kullanıcı adı ve görünen ad güncellendi. Bundan sonra kullanıcı adı + şifre ile giriş yapabilirsin.');
 }
 async function loadPOSTables(){
-  const t=await sb.from('pos_tables').select('*').order('table_number'); if(t.error){alert('Masalar yüklenemedi. Önce pos_masalar.sql dosyasını Supabase SQL Editor\\'da çalıştır.\\n\\n'+t.error.message);return;}
+  const t=await sb.from('pos_tables').select('*').order('table_number'); if(t.error){alert('Masalar yüklenemedi. Önce pos_masalar.sql dosyasını Supabase SQL Editor\'da çalıştır.\\n\\n'+t.error.message);return;}
   const o=await sb.from('pos_orders').select('*').eq('branch',posBranch).order('id'); if(o.error){alert('Şube alanı bulunamadı. Yeni pos_masalar.sql dosyasını çalıştırman gerekiyor.\\n\\n'+o.error.message);return;}
   posTables=t.data||[]; posOrders=o.data||[];
   const orderIds=posOrders.map(x=>x.id).filter(Boolean);
