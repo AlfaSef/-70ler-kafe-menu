@@ -2652,20 +2652,24 @@ async function getPOSRole(){
   try{const r=await sb.rpc('bootstrap_pos_owner'); if(!r.error && r.data) return r.data; const r2=await sb.rpc('get_my_pos_role'); return r2.data||'none';}
   catch(e){console.warn('POS rolü okunamadı:',e); return 'admin';}
 }
-async function ensurePOSCatalog(){
-  if(products.length && categories.length)return true;
-  const c=await sb.from('categories').select('*').order('sort_order');
-  const p=await sb.from('products').select('*').order('sort_order');
+async function loadPOSCatalog(){
+  const [c,p]=await Promise.all([
+    sb.from('categories').select('*').eq('is_active',true).order('sort_order'),
+    sb.from('products').select('*').eq('is_active',true).order('sort_order')
+  ]);
   if(c.error||p.error){
-    alert('POS menüsü yüklenemedi.\n\n'+(c.error?.message||p.error?.message||'Bilinmeyen hata'));
+    const msg=c.error?.message||p.error?.message||'Bilinmeyen hata';
+    console.error('POS katalog yüklenemedi:',{categoryError:c.error,productError:p.error});
+    alert('POS menüsü yüklenemedi.\\n\\n'+msg);
     return false;
   }
   categories=c.data||[];
   products=p.data||[];
+  console.log('POS katalog yüklendi:',{categories:categories.length,products:products.length});
   return true;
 }
 async function openPOS(){
-  if(!(await ensurePOSCatalog()))return;
+  if(!(await loadPOSCatalog()))return;
   document.getElementById('posPanel').style.display='block'; document.getElementById('personnelPanel').style.display='none';
   posRole=posRole==='none'?await getPOSRole():posRole; updatePOSBranchUI(); applyAdminRoleUI(); await loadPOSUserProfile();
   document.querySelectorAll('#dashboard>.panel:not(.admin-toolbar-panel):not(#posPanel):not(#personnelPanel)').forEach(x=>x.style.display='none');
