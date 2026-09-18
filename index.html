@@ -2653,9 +2653,11 @@ async function getPOSRole(){
   catch(e){console.warn('POS rolü okunamadı:',e); return 'admin';}
 }
 async function loadPOSCatalog(){
+  // Katalogu POS'a her giriste taze çek. is_active filtresini SQL'de
+  // kullanmıyoruz; personel/RLS senaryolarında boş sonuç riskini kaldırıyoruz.
   const [c,p]=await Promise.all([
-    sb.from('categories').select('*').eq('is_active',true).order('sort_order'),
-    sb.from('products').select('*').eq('is_active',true).order('sort_order')
+    sb.from('categories').select('*').order('sort_order'),
+    sb.from('products').select('*').order('sort_order')
   ]);
   if(c.error||p.error){
     const msg=c.error?.message||p.error?.message||'Bilinmeyen hata';
@@ -2817,7 +2819,7 @@ async function backToTables(){
 function posVisibleProducts(){
   const q=(document.getElementById('posProductSearch')?.value||'').trim().toLocaleLowerCase('tr-TR');
   return products.filter(p=>{
-    if(!p.is_active)return false;
+    if(p.is_active===false)return false;
     const cat=categories.find(c=>String(c.id)===String(p.category_id));
     if(posCurrentCategory!=='all'&&String(p.category_id)!==String(posCurrentCategory))return false;
     if(posCurrentSubcategory!=='all'&&String(p.subcategory||'').trim().toLocaleLowerCase('tr-TR')!==String(posCurrentSubcategory).trim().toLocaleLowerCase('tr-TR'))return false;
