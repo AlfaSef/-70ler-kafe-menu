@@ -2810,9 +2810,9 @@ async function openPOSTable(tableId){
   posCurrentOrder=activeOrderForTable(tableId);
   if(posCurrentOrder) await loadPOSOrderItems(); else posItems=[];
   document.getElementById('posTableView').style.display='none'; document.getElementById('posOrderView').style.display='block';
-  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label; document.getElementById('ticketTableName').textContent=posCurrentTable.label; document.getElementById('posOrderStatus').textContent='DOLU';
-  document.getElementById('ticketOpenedInfo').textContent='Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('posDiscount').value=Number(posCurrentOrder.discount_percent||0); posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear(); renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
+  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label; document.getElementById('ticketTableName').textContent=posCurrentTable.label; document.getElementById('posOrderStatus').textContent=posCurrentOrder?'DOLU':'BOŞ';
+  document.getElementById('ticketOpenedInfo').textContent=posCurrentOrder?'Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'Yeni masa';
+  document.getElementById('posDiscount').value=Number(posCurrentOrder?.discount_percent||0); posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear(); renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
 }
 async function loadPOSOrderItems(){const r=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id'); if(r.error){alert(r.error.message);return;}posItems=r.data||[];}
 async function backToTables(){
