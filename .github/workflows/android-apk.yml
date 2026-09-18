@@ -45,8 +45,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v1.0.3 >/dev/null 2>&1; then
-            gh release upload v1.0.3 70ler-Kafe-Personel.apk --clobber
+          if gh release view v1.0.4 >/dev/null 2>&1; then
+            gh release upload v1.0.4 70ler-Kafe-Personel.apk --clobber
           else
-            gh release create v1.0.3 70ler-Kafe-Personel.apk --title "70'ler Kafe Personel v1.0.3" --notes "Android personel uygulaması."
+            gh release create v1.0.4 70ler-Kafe-Personel.apk --title "70'ler Kafe Personel v1.0.4" --notes "Android personel uygulaması."
           fi
