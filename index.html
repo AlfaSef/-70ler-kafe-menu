@@ -2792,6 +2792,8 @@ function renderPOSTables(){
 }
 function posOrderTotalCached(orderId){return posItems.filter(x=>String(x.order_id)===String(orderId)).reduce((s,x)=>s+Number(x.unit_price)*Number(x.quantity),0)}
 async function openPOSTable(tableId){
+  // Mobilde eski/race durumunu tamamen kaldır: masaya girerken katalogu yeniden çek.
+  if(!(await loadPOSCatalog()))return;
   posCurrentTable=posTables.find(t=>String(t.id)===String(tableId)); if(!posCurrentTable)return;
   posCurrentOrder=activeOrderForTable(tableId);
   posItems=[];
@@ -4665,7 +4667,8 @@ footer{margin:34px 0 5px!important;padding:25px 12px 10px!important;border-top:1
 #posPanel .pos-products-panel,#posPanel .pos-ticket-panel{border-radius:12px!important;border:1px solid #403631!important;background:#151311!important;box-shadow:0 12px 28px #0004!important}
 #posPanel .pos-products-panel{padding:0!important;overflow:hidden}.pos-products-head{display:block!important;padding:17px 13px 8px!important;margin:0!important}.pos-products-head .pos-section-kicker{display:none}.pos-products-head h3{margin:0!important;font-size:20px!important;color:#f7efe7}
 #posPanel .pos-category-strip{padding:0 13px 10px!important;margin:0!important;gap:7px!important}.pos-cat-btn{padding:9px 12px!important;border-radius:7px!important;font-size:9px!important;background:#25201d!important;border-color:#39312c!important;color:#ddd0c7!important}.pos-cat-btn.active{background:#e45f84!important;border-color:#e45f84!important;color:#fff!important}
-#posPanel .pos-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;max-height:calc(100vh - 370px)!important;padding:2px 13px 13px!important;overflow:auto}
+#posPanel .pos-product-grid{display:grid!important;visibility:visible!important;opacity:1!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;max-height:calc(100vh - 370px)!important;padding:2px 13px 13px!important;overflow:auto}
+#posPanel .pos-product-card{display:block!important;visibility:visible!important;opacity:1!important}
 #posPanel .pos-product-card{border-radius:8px!important;background:#1f1b18!important;border-color:#423831!important}.pos-product-photo{aspect-ratio:1.1!important}.pos-product-info{padding:8px!important}.pos-product-name{font-size:10px!important;min-height:26px!important}.pos-product-price{font-size:11px!important;margin-top:5px!important}
 #posPanel .pos-ticket-panel{padding:13px!important;min-height:0!important;height:100%;box-sizing:border-box}.ticket-head{padding-bottom:10px!important}.ticket-head strong{font-size:18px!important}.ticket-head small{font-size:8px!important}.ticket-items{max-height:none!important;min-height:160px!important}.ticket-row{padding:9px 2px!important;grid-template-columns:1fr auto auto!important}.ticket-row-main b{font-size:10px!important}.ticket-row-price{font-size:9px!important;min-width:58px!important}.qty-control button{width:23px!important;height:25px!important}.qty-control span{min-width:22px!important}.ticket-summary>div{padding:5px 0!important}.ticket-total strong{font-size:23px!important}.ticket-actions{grid-template-columns:1fr 1fr!important}.ticket-actions .btn{padding:9px 5px!important;font-size:8px!important}.print-btn{grid-column:1/-1!important}.pos-close-account{padding:12px!important;font-size:11px!important}
 #posPanel .pos-order-topbar{padding:10px 24px 0!important}.pos-order-topbar .btn{font-size:9px!important}.pos-order-topbar{margin-bottom:4px!important}
