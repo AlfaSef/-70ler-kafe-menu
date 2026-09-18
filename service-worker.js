@@ -1,10 +1,10 @@
-const CACHE_NAME = "70ler-kafe-pwa-v7";
+const CACHE_NAME = "70ler-kafe-pwa-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./70ler-pwa-icon-192-new.png",
-  "./70ler-pwa-icon-512-new.png"
+  "./70ler-kafe-logo-transparent.png",
+  
 ];
 
 self.addEventListener("install", event => {

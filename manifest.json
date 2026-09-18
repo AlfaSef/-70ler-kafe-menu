@@ -9,14 +9,14 @@
   "lang": "tr",
   "icons": [
     {
-      "src": "./70ler-pwa-icon-192-new.png",
-      "sizes": "192x192",
+      "src": "./70ler-kafe-logo-transparent.png?v=8",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./70ler-pwa-icon-512-new.png",
-      "sizes": "512x512",
+      "src": "./70ler-kafe-logo-transparent.png?v=8",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
     }
