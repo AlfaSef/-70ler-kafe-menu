@@ -4681,3 +4681,18 @@ footer{margin:34px 0 5px!important;padding:25px 12px 10px!important;border-top:1
 .pos-profile-menu-action.danger b{color:#f1d6d0}
 @media(max-width:600px){.pos-profile-menu{width:min(285px,calc(100vw - 24px));right:12px!important;top:62px!important}}
 </style>
+
+<style id="pos-mobile-branch-selector-fix">
+@media(max-width:850px){
+  #posPanel .pos-topbar-right{display:flex!important;align-items:center!important;justify-self:end!important;gap:0!important;}
+  #posPanel .pos-user-button{display:none!important;}
+  #posPanel .pos-branch{display:flex!important;align-items:center!important;justify-content:center!important;min-width:132px!important;height:40px!important;padding:0 10px!important;}
+  #posPanel .pos-branch b{display:inline!important;font-size:10px!important;}
+  #posPanel .pos-branch i{display:inline!important;margin-left:4px!important;}
+}
+@media(max-width:560px){
+  #posPanel .pos-topbar{grid-template-columns:minmax(0,1fr) auto!important;}
+  #posPanel .pos-topbar-right{display:flex!important;}
+  #posPanel .pos-branch{height:36px!important;min-width:132px!important;font-size:10px!important;}
+}
+</style>
