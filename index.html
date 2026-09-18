@@ -2797,23 +2797,9 @@ async function saveMyPOSProfile(){
 async function loadPOSTables(){
   const t=await sb.from('pos_tables').select('*').order('table_number'); if(t.error){alert('Masalar yüklenemedi. Önce pos_masalar.sql dosyasını Supabase SQL Editor\'da çalıştır.\n\n'+t.error.message);return;}
   const o=await sb.from('pos_orders').select('*').eq('branch',posBranch).order('id'); if(o.error){alert('Şube alanı bulunamadı. Yeni pos_masalar.sql dosyasını çalıştırman gerekiyor.\n\n'+o.error.message);return;}
-  posTables=t.data||[]; posOrders=o.data||[];
-  // Ürün eklenmeden açılmış eski/boş adisyonları temizle.
-  if(posOrders.length){
-    const ids=posOrders.map(x=>x.id);
-    const oi=await sb.from('pos_order_items').select('order_id').in('order_id',ids);
-    if(!oi.error){
-      const used=new Set((oi.data||[]).map(x=>String(x.order_id)));
-      const empty=posOrders.filter(x=>!used.has(String(x.id)));
-      if(empty.length){
-        await sb.from('pos_orders').delete().in('id',empty.map(x=>x.id));
-        posOrders=posOrders.filter(x=>used.has(String(x.id)));
-      }
-    }
-  }
-  renderPOSTables();
+  posTables=t.data||[]; posOrders=o.data||[]; renderPOSTables();
 }
-function activeOrderForTablefunction activeOrderForTable(tableId){return posOrders.find(o=>String(o.table_id)===String(tableId)&&String(o.branch||'ataevler')===String(posBranch))||null}
+function activeOrderForTable(tableId){return posOrders.find(o=>String(o.table_id)===String(tableId)&&String(o.branch||'ataevler')===String(posBranch))||null}
 function renderPOSTables(){
   const grid=document.getElementById('posTableGrid'); if(!grid)return;
   grid.innerHTML=posTables.map(t=>{const o=activeOrderForTable(t.id);return `<button type="button" class="pos-table-card ${o?'occupied':''}" onclick="openPOSTable(${t.id})"><span class="pos-table-number">${esc(t.label)}</span><span class="pos-table-status"><i></i>${o?'DOLU':'BOŞ'}</span></button>`}).join('');
@@ -2824,12 +2810,11 @@ async function openPOSTable(tableId){
   posCurrentOrder=activeOrderForTable(tableId);
   if(posCurrentOrder) await loadPOSOrderItems(); else posItems=[];
   document.getElementById('posTableView').style.display='none'; document.getElementById('posOrderView').style.display='block';
-  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label; document.getElementById('ticketTableName').textContent=posCurrentTable.label;
-  document.getElementById('posOrderStatus').textContent=posCurrentOrder?'DOLU':'BOŞ';
-  document.getElementById('ticketOpenedInfo').textContent=posCurrentOrder?'Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'Yeni masa';
-  document.getElementById('posDiscount').value=Number(posCurrentOrder?.discount_percent||0); posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear(); renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
+  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label; document.getElementById('ticketTableName').textContent=posCurrentTable.label; document.getElementById('posOrderStatus').textContent='DOLU';
+  document.getElementById('ticketOpenedInfo').textContent='Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('posDiscount').value=Number(posCurrentOrder.discount_percent||0); posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear(); renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
 }
-async function loadPOSOrderItemsasync function loadPOSOrderItems(){const r=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id'); if(r.error){alert(r.error.message);return;}posItems=r.data||[];}
+async function loadPOSOrderItems(){const r=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id'); if(r.error){alert(r.error.message);return;}posItems=r.data||[];}
 async function backToTables(){
   if(posCurrentOrder && posItems.length===0){
     await sb.from('pos_orders').delete().eq('id',posCurrentOrder.id);
@@ -2838,7 +2823,7 @@ async function backToTables(){
   document.getElementById('posOrderView').style.display='none';document.getElementById('posTableView').style.display='block';
   posCurrentOrder=null;posCurrentTable=null;posItems=[];posSelectedItemIds.clear();posSelectedQty.clear();await loadPOSTables();
 }
-function posVisibleProductsfunction posVisibleProducts(){
+function posVisibleProducts(){
   const q=(document.getElementById('posProductSearch')?.value||'').trim().toLocaleLowerCase('tr-TR');
   return products.filter(p=>{
     if(!p.is_active)return false;
@@ -2877,26 +2862,32 @@ function buildPOSOptionChoices(p){
   const opts=[];
   const portions=Array.isArray(p?.portion_options)?p.portion_options:[];
   const wraps=Array.isArray(p?.wrap_options)?p.wrap_options:[];
-  // Dürüm ürününün ana fiyatı, seçenek penceresinde Normal Dürüm olarak seçilebilir.
-  if(wraps.length){
-    opts.push({label:'Normal Dürüm',price:Number(p.price||0),meta:p.weight?'Gramaj: '+p.weight:'Standart dürüm',base:true});
-  }
+  // Ürünün ana fiyatı ve ana gramajı zaten 1 porsiyondur.
+  // Admin ekranında yalnızca "Az Porsiyon" ve "1,5 Porsiyon" girilmiş olsa bile
+  // POS seçim penceresinde 1 Porsiyon her zaman otomatik olarak gösterilir.
   if(portions.length){
     const hasOne=portions.some(o=>{
       const n=String(o?.label||'').toLocaleLowerCase('tr-TR').replace(/\s+/g,'');
       return n==='1porsiyon'||n==='1pors.'||n.includes('1porsiyon');
     });
-    if(!hasOne) opts.push({label:'1 Porsiyon',price:Number(p.price||0),meta:p.weight?'Gramaj: '+p.weight:'Standart porsiyon',base:true});
+    if(!hasOne){
+      opts.push({label:'1 Porsiyon',price:Number(p.price||0),meta:p.weight?`Gramaj: ${p.weight}`:'Standart porsiyon',base:true});
+    }
     portions.forEach(o=>opts.push({
-      label:o.label, price:Number(o.price||0),
-      meta:[o.rice_weight?'Pilav: '+o.rice_weight+(/^\d/.test(String(o.rice_weight))?' g':''):'',o.chicken_weight?'Tavuk: '+o.chicken_weight+(/^\d/.test(String(o.chicken_weight))?' g':''):''].filter(Boolean).join(' · '),
+      label:o.label,
+      price:Number(o.price||0),
+      meta:[o.rice_weight?`Pilav: ${o.rice_weight}${/^\d/.test(String(o.rice_weight))?' g':''}`:'',o.chicken_weight?`Tavuk: ${o.chicken_weight}${/^\d/.test(String(o.chicken_weight))?' g':''}`:''].filter(Boolean).join(' · '),
       base:false
     }));
+  }
+  // Dürümün ana fiyatı da her zaman seçilebilir: Normal Dürüm.
+  if(wraps.length){
+    opts.unshift({label:'Normal Dürüm',price:Number(p.price||0),meta:p.weight?'Gramaj: '+p.weight:'Standart dürüm',base:true});
   }
   wraps.forEach(o=>opts.push({label:o.label,price:Number(o.price||0),meta:'Dürüm seçeneği',base:false}));
   return opts;
 }
-function openPOSOptionModalfunction openPOSOptionModal(productId, opts){
+function openPOSOptionModal(productId, opts){
   return new Promise(resolve=>{
     const old=document.getElementById('posOptionOverlay');if(old)old.remove();posOptionResolver=resolve;
     const p=products.find(x=>String(x.id)===String(productId));
@@ -2913,11 +2904,9 @@ function choosePOSOption(i){
 }
 function cancelPOSOption(){const el=document.getElementById('posOptionOverlay');if(posOptionResolver)posOptionResolver(null);posOptionResolver=null;el?.remove();}
 async function addPOSProduct(productId){
-  const p=products.find(x=>String(x.id)===String(productId));if(!p)return;
-  let optionLabel='',price=Number(p.price||0),note='';
+  const p=products.find(x=>String(x.id)===String(productId));if(!p)return;let optionLabel='',price=Number(p.price||0),note='';
   const opts=buildPOSOptionChoices(p);
   if(opts.length){const choice=await openPOSOptionModal(p.id,opts);if(!choice)return;optionLabel=choice.label;price=choice.price;}
-  // Boş masa, ilk ürün seçildiği anda adisyon oluşturur.
   if(!posCurrentOrder){
     const r=await sb.from('pos_orders').insert({table_id:posCurrentTable.id,branch:posBranch,opened_by:(await sb.auth.getUser()).data.user?.id}).select().single();
     if(r.error){alert(r.error.message);return;}
@@ -2930,7 +2919,7 @@ async function addPOSProduct(productId){
   else{const r=await sb.from('pos_order_items').insert({order_id:posCurrentOrder.id,product_id:p.id,product_name:p.name,unit_price:price,quantity:1,option_label:optionLabel,note}).select().single();if(r.error){alert(r.error.message);return;}posItems.push(r.data);}
   renderPOSTicket();renderPOSTables();
 }
-function discountedSubtotalfunction discountedSubtotal(){const sub=posItems.reduce((s,x)=>s+Number(x.unit_price)*Number(x.quantity),0),d=Math.min(100,Math.max(0,Number(document.getElementById('posDiscount')?.value||0)));return {sub,discount:sub*d/100,total:sub-sub*d/100};}
+function discountedSubtotal(){const sub=posItems.reduce((s,x)=>s+Number(x.unit_price)*Number(x.quantity),0),d=Math.min(100,Math.max(0,Number(document.getElementById('posDiscount')?.value||0)));return {sub,discount:sub*d/100,total:sub-sub*d/100};}
 function togglePOSItemSelection(id){
   const x=posItems.find(i=>String(i.id)===String(id));if(!x)return;
   const key=Number(id);if(posSelectedItemIds.has(key)){posSelectedItemIds.delete(key);posSelectedQty.delete(key);}else{posSelectedItemIds.add(key);posSelectedQty.set(key,Number(x.quantity));}
@@ -4691,32 +4680,4 @@ footer{margin:34px 0 5px!important;padding:25px 12px 10px!important;border-top:1
 .pos-profile-menu-action.danger>span{color:#f0c9c0;border-color:#5a3b35}
 .pos-profile-menu-action.danger b{color:#f1d6d0}
 @media(max-width:600px){.pos-profile-menu{width:min(285px,calc(100vw - 24px));right:12px!important;top:62px!important}}
-</style>
-<style id="pos-mobile-branch-selector">
-@media(max-width:560px){
-  #posPanel .pos-topbar{grid-template-columns:minmax(0,1fr) auto!important;}
-  #posPanel .pos-topbar-right{
-    display:flex!important;
-    align-items:center!important;
-    justify-content:flex-end!important;
-    gap:0!important;
-  }
-  #posPanel .pos-user-button{display:none!important;}
-  #posPanel .pos-branch{
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    min-width:132px!important;
-    height:40px!important;
-    padding:0 10px!important;
-    border:1px solid #4a3c35!important;
-    border-radius:9px!important;
-    background:#171311!important;
-    color:#e6d9d1!important;
-    font:700 10px Arial!important;
-  }
-  #posPanel .pos-branch span{font-size:16px!important;margin-right:5px!important;}
-  #posPanel .pos-branch b{display:inline!important;font-size:10px!important;}
-  #posPanel .pos-branch i{display:inline!important;margin-left:4px!important;}
-}
 </style>
