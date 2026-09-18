@@ -1,7 +1,7 @@
 {
   "name": "70'ler Kafe Personel",
   "short_name": "70'ler Kafe",
-  "start_url": "./index.html?app=personel",
+  "start_url": "./personel.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f7eee0",
