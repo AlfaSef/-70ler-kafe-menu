@@ -2,6 +2,7 @@ const CACHE_NAME = "70ler-kafe-pwa-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./personel.html",
   "./manifest.json",
   "./pwa-icon-192.png",
   "./pwa-icon-512.png"
