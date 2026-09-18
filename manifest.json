@@ -9,13 +9,13 @@
   "lang": "tr",
   "icons": [
     {
-      "src": "./pwa-icon-192.png",
+      "src": "./70ler-pwa-icon-192-new.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./pwa-icon-512.png",
+      "src": "./70ler-pwa-icon-512-new.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
