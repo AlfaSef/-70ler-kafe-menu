@@ -1,4 +1,4 @@
-const CACHE_NAME = "70ler-kafe-pwa-v4";
+const CACHE_NAME = "70ler-kafe-pwa-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
