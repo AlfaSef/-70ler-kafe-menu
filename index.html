@@ -1890,11 +1890,6 @@ const logoHasan = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAD6AAAA+gCAYAAAD
 const mainLogo=document.getElementById("mainLogo"); if(mainLogo) mainLogo.src=logo70;
 
 function init(){
-  const appMode = new URLSearchParams(location.search).get("app");
-  if(appMode === "personel"){
-    showAdmin();
-  }
-
   if(!cfg.url || cfg.url.includes("BURAYA") || !cfg.publishableKey || cfg.publishableKey.includes("BURAYA")){
     document.getElementById("menu").innerHTML='<div class="empty"><b>Kurulum tamamlanıyor.</b><br>GitHub\'a yükledikten sonra config.js içine Supabase URL ve Publishable Key eklenmeli.</div>';
     return;
