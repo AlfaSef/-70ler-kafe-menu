@@ -1462,6 +1462,66 @@ body.category-page .category-section{display:none!important} body.category-page 
 @keyframes campaignNoticeIn{from{opacity:0;transform:translate(-50%,-12px)}to{opacity:1;transform:translate(-50%,0)}}
 </style>
 
+
+<style id="pos-mobile-optimization">
+/* 70'ler Kafe POS - telefon optimizasyonu */
+html,body{max-width:100%;overflow-x:hidden}
+@media(max-width:560px){
+  #posPanel{padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;width:100%!important;max-width:100%!important;margin:0!important}
+  #posPanel .pos-main{min-width:0!important;width:100%!important;overflow-x:hidden!important}
+  #posPanel .pos-topbar{height:60px!important;min-height:60px!important;padding:0 14px!important;position:sticky!important;top:0!important;z-index:100!important;background:#120f0e!important;border-bottom:1px solid #332a25!important}
+  #posPanel .pos-topbar-left{min-width:0!important}
+  #posPanel .pos-topbar-left h1{font-size:22px!important;line-height:1!important;white-space:nowrap!important}
+  #posPanel .pos-topbar-right{display:none!important}
+
+  #posPanel .pos-table-section{padding:12px 12px 18px!important}
+  #posPanel .pos-table-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #posPanel .pos-table-card{min-height:82px!important;height:auto!important;padding:13px!important;border-radius:13px!important;box-sizing:border-box!important}
+  #posPanel .pos-table-number{font-size:14px!important}
+  #posPanel .pos-table-status{margin-top:10px!important;font-size:9px!important}
+  #posPanel .pos-table-total{display:none!important}
+
+  #posPanel #posOrderView{width:100%!important;min-width:0!important}
+  #posPanel .pos-order-topbar{position:sticky!important;top:60px!important;z-index:90!important;display:grid!important;grid-template-columns:auto 1fr auto!important;align-items:center!important;gap:8px!important;margin:0!important;padding:10px 12px!important;background:#120f0e!important;border-bottom:1px solid #332a25!important}
+  #posPanel .pos-order-topbar .btn{min-height:42px!important;padding:9px 12px!important;font-size:10px!important;white-space:nowrap!important}
+  #posPanel .pos-selected-table{font-size:16px!important;text-align:center!important}
+  #posPanel .pos-order-status{font-size:8px!important;padding:7px 9px!important;white-space:nowrap!important}
+
+  #posPanel .pos-workspace{display:flex!important;flex-direction:column!important;gap:10px!important;padding:10px 10px 18px!important;width:100%!important;box-sizing:border-box!important}
+  #posPanel .pos-products-panel{display:block!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;overflow:hidden!important;border-radius:14px!important}
+  #posPanel .pos-products-head{padding:13px 12px 8px!important}
+  #posPanel .pos-products-head h3{font-size:18px!important}
+  #posPanel .pos-category-strip,#posPanel .pos-subcategory-strip{padding-left:12px!important;padding-right:12px!important}
+  #posPanel .pos-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;max-height:42vh!important;min-height:120px!important;padding:2px 12px 12px!important;overflow-y:auto!important}
+  #posPanel .pos-product-card{border-radius:10px!important}
+  #posPanel .pos-product-info{padding:8px!important}
+  #posPanel .pos-product-name{font-size:10px!important;min-height:25px!important}
+  #posPanel .pos-product-price{font-size:11px!important}
+
+  #posPanel .pos-ticket-panel{display:flex!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;padding:12px!important;box-sizing:border-box!important;border-radius:14px!important}
+  #posPanel .ticket-head{padding-bottom:10px!important}
+  #posPanel .ticket-head strong{font-size:18px!important}
+  #posPanel .ticket-items{min-height:90px!important;max-height:32vh!important;overflow-y:auto!important}
+  #posPanel .ticket-empty{padding:24px 8px!important}
+  #posPanel .ticket-summary>div{padding:7px 0!important;font-size:11px!important}
+  #posPanel .ticket-summary b{font-size:11px!important}
+  #posPanel .ticket-total{padding:12px 0!important}
+  #posPanel .ticket-total span{font-size:13px!important}
+  #posPanel .ticket-total strong{font-size:25px!important}
+  #posPanel .discount-control button{width:34px!important;height:34px!important}
+  #posPanel .discount-control input{width:45px!important;height:34px!important;font-size:13px!important}
+  #posPanel .ticket-selection-bar{min-height:46px!important;box-sizing:border-box!important}
+  #posPanel .ticket-actions{grid-template-columns:1fr!important;gap:8px!important;margin-top:10px!important}
+  #posPanel .ticket-actions .btn{width:100%!important;min-height:48px!important;padding:12px!important;font-size:10px!important}
+  #posPanel .pos-close-account{min-height:50px!important;padding:13px!important;font-size:12px!important;margin-top:9px!important}
+}
+
+@media(max-width:380px){
+  #posPanel .pos-order-topbar{grid-template-columns:auto 1fr!important}
+  #posPanel .pos-order-status{display:none!important}
+  #posPanel .pos-product-grid{gap:7px!important}
+}
+</style>
 </head>
 </style>
 <body>
@@ -1635,24 +1695,6 @@ body.category-page .category-section{display:none!important} body.category-page 
       <button class="btn image-opt-btn" id="imageOptimizerBtn" onclick="openImageOptimizer()">⚡ Görselleri Optimize Et</button>
       <button class="btn secondary" onclick="loadAdmin()">Yenile</button>
       <button class="btn secondary" onclick="logout()">Çıkış Yap</button>
-    </div>
-  </div>
-
-  <div class="panel" id="staffAppInstallPanel" style="display:block;background:linear-gradient(145deg,#fffaf2,#f7eee0);border:2px solid #332a25">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap">
-      <div style="min-width:0">
-        <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;color:#9f2d2d">PERSONEL UYGULAMASI</div>
-        <h2 style="margin:5px 0 6px">Telefonuna Kur</h2>
-        <p style="margin:0;color:#6b6259;font-size:13px;line-height:1.5">Masalar ve personel işlemlerine daha hızlı ulaşmak için Android uygulamasını indirebilir veya iPhone'da bu sayfayı ana ekrana ekleyebilirsin.</p>
-      </div>
-    </div>
-    <div class="actions" style="margin-top:14px">
-      <a class="btn" href="https://github.com/AlfaSef/-70ler-kafe-menu/releases/download/v1.0.0/70ler-Kafe-Personel.apk" download style="text-decoration:none;color:#272421">🤖 Android APK İndir</a>
-      <button class="btn secondary" type="button" onclick="window.location.href='./personel.html'">🍎 iPhone Kurulum Sayfası</button>
-    </div>
-    <div style="margin-top:12px;padding:11px 12px;border-radius:12px;background:#fffdf8;border:1px solid #ded1c5;color:#756b62;font-size:11px;line-height:1.55">
-      <b style="color:#332a25">iPhone:</b> Safari'de bu sayfayı aç → Paylaş → <b>Ana Ekrana Ekle</b>.<br>
-      <b style="color:#332a25">Android:</b> APK'yı indir → dosyayı aç → gerekirse Android'in istediği kurulum iznini ver → Kur.
     </div>
   </div>
 
@@ -1908,10 +1950,11 @@ const logoHasan = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAD6AAAA+gCAYAAAD
 const mainLogo=document.getElementById("mainLogo"); if(mainLogo) mainLogo.src=logo70;
 
 function init(){
-    const appMode = new URLSearchParams(location.search).get("app");
+  const appMode = new URLSearchParams(location.search).get("app");
   if(appMode === "personel"){
     showAdmin();
   }
+
   if(!cfg.url || cfg.url.includes("BURAYA") || !cfg.publishableKey || cfg.publishableKey.includes("BURAYA")){
     document.getElementById("menu").innerHTML='<div class="empty"><b>Kurulum tamamlanıyor.</b><br>GitHub\'a yükledikten sonra config.js içine Supabase URL ve Publishable Key eklenmeli.</div>';
     return;
@@ -2652,26 +2695,7 @@ async function getPOSRole(){
   try{const r=await sb.rpc('bootstrap_pos_owner'); if(!r.error && r.data) return r.data; const r2=await sb.rpc('get_my_pos_role'); return r2.data||'none';}
   catch(e){console.warn('POS rolü okunamadı:',e); return 'admin';}
 }
-async function loadPOSCatalog(){
-  // Katalogu POS'a her giriste taze çek. is_active filtresini SQL'de
-  // kullanmıyoruz; personel/RLS senaryolarında boş sonuç riskini kaldırıyoruz.
-  const [c,p]=await Promise.all([
-    sb.from('categories').select('*').order('sort_order'),
-    sb.from('products').select('*').order('sort_order')
-  ]);
-  if(c.error||p.error){
-    const msg=c.error?.message||p.error?.message||'Bilinmeyen hata';
-    console.error('POS katalog yüklenemedi:',{categoryError:c.error,productError:p.error});
-    alert('POS menüsü yüklenemedi.\\n\\n'+msg);
-    return false;
-  }
-  categories=c.data||[];
-  products=p.data||[];
-  console.log('POS katalog yüklendi:',{categories:categories.length,products:products.length});
-  return true;
-}
 async function openPOS(){
-  if(!(await loadPOSCatalog()))return;
   document.getElementById('posPanel').style.display='block'; document.getElementById('personnelPanel').style.display='none';
   posRole=posRole==='none'?await getPOSRole():posRole; updatePOSBranchUI(); applyAdminRoleUI(); await loadPOSUserProfile();
   document.querySelectorAll('#dashboard>.panel:not(.admin-toolbar-panel):not(#posPanel):not(#personnelPanel)').forEach(x=>x.style.display='none');
@@ -2768,22 +2792,9 @@ async function saveMyPOSProfile(){
   const r=await sb.from('pos_profiles').upsert({user_id:user.id,display_name:name,username,email:user.email||null,role:'admin',updated_at:new Date().toISOString()},{onConflict:'user_id'});if(r.error){alert(r.error.message);return;}const n=document.getElementById('posUserName');if(n)n.textContent=name;alert('POS kullanıcı adı ve görünen ad güncellendi. Bundan sonra kullanıcı adı + şifre ile giriş yapabilirsin.');
 }
 async function loadPOSTables(){
-  const t=await sb.from('pos_tables').select('*').order('table_number'); if(t.error){alert('Masalar yüklenemedi. Önce pos_masalar.sql dosyasını Supabase SQL Editor\'da çalıştır.\\n\\n'+t.error.message);return;}
-  const o=await sb.from('pos_orders').select('*').eq('branch',posBranch).order('id'); if(o.error){alert('Şube alanı bulunamadı. Yeni pos_masalar.sql dosyasını çalıştırman gerekiyor.\\n\\n'+o.error.message);return;}
-  posTables=t.data||[]; posOrders=o.data||[];
-  const orderIds=posOrders.map(x=>x.id).filter(Boolean);
-  if(orderIds.length){
-    const items=await sb.from('pos_order_items').select('order_id').in('order_id',orderIds);
-    if(!items.error){
-      const nonEmpty=new Set((items.data||[]).map(x=>String(x.order_id)));
-      const emptyOrders=posOrders.filter(x=>!nonEmpty.has(String(x.id)));
-      for(const empty of emptyOrders){
-        const d=await sb.from('pos_orders').delete().eq('id',empty.id);
-        if(!d.error) posOrders=posOrders.filter(x=>String(x.id)!==String(empty.id));
-      }
-    }
-  }
-  renderPOSTables();
+  const t=await sb.from('pos_tables').select('*').order('table_number'); if(t.error){alert('Masalar yüklenemedi. Önce pos_masalar.sql dosyasını Supabase SQL Editor\'da çalıştır.\n\n'+t.error.message);return;}
+  const o=await sb.from('pos_orders').select('*').eq('branch',posBranch).order('id'); if(o.error){alert('Şube alanı bulunamadı. Yeni pos_masalar.sql dosyasını çalıştırman gerekiyor.\n\n'+o.error.message);return;}
+  posTables=t.data||[]; posOrders=o.data||[]; renderPOSTables();
 }
 function activeOrderForTable(tableId){return posOrders.find(o=>String(o.table_id)===String(tableId)&&String(o.branch||'ataevler')===String(posBranch))||null}
 function renderPOSTables(){
@@ -2792,36 +2803,21 @@ function renderPOSTables(){
 }
 function posOrderTotalCached(orderId){return posItems.filter(x=>String(x.order_id)===String(orderId)).reduce((s,x)=>s+Number(x.unit_price)*Number(x.quantity),0)}
 async function openPOSTable(tableId){
-  // Mobilde eski/race durumunu tamamen kaldır: masaya girerken katalogu yeniden çek.
-  if(!(await loadPOSCatalog()))return;
   posCurrentTable=posTables.find(t=>String(t.id)===String(tableId)); if(!posCurrentTable)return;
   posCurrentOrder=activeOrderForTable(tableId);
-  posItems=[];
-  if(posCurrentOrder){
-    const r=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id');
-    if(r.error){alert(r.error.message);return;}
-    posItems=r.data||[];
-  }
+  if(!posCurrentOrder){const r=await sb.from('pos_orders').insert({table_id:tableId,branch:posBranch,opened_by:(await sb.auth.getUser()).data.user?.id}).select().single(); if(r.error){alert(r.error.message);return;} posCurrentOrder=r.data; posOrders.push(posCurrentOrder);}
+  await loadPOSOrderItems();
   document.getElementById('posTableView').style.display='none'; document.getElementById('posOrderView').style.display='block';
-  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label;
-  document.getElementById('ticketTableName').textContent=posCurrentTable.label;
-  document.getElementById('posOrderStatus').textContent=posCurrentOrder?'DOLU':'BOŞ';
-  document.getElementById('ticketOpenedInfo').textContent=posCurrentOrder
-    ? 'Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})
-    : 'Yeni hesap';
-  document.getElementById('posDiscount').value=Number(posCurrentOrder?.discount_percent||0);
-  posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear();
-  renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
+  document.getElementById('posSelectedTableLabel').textContent=posCurrentTable.label; document.getElementById('ticketTableName').textContent=posCurrentTable.label; document.getElementById('posOrderStatus').textContent='DOLU';
+  document.getElementById('ticketOpenedInfo').textContent='Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('posDiscount').value=Number(posCurrentOrder.discount_percent||0); posCurrentCategory='all'; posCurrentSubcategory='all'; posSelectedItemIds.clear(); posSelectedQty.clear(); renderPOSCategories(); renderPOSProducts(); renderPOSTicket();
 }
-async function backToTables(){
-  document.getElementById('posOrderView').style.display='none'; document.getElementById('posTableView').style.display='block';
-  posItems=[]; posSelectedItemIds.clear(); posSelectedQty.clear(); posCurrentOrder=null; posCurrentTable=null;
-  await loadPOSTables();
-}
+async function loadPOSOrderItems(){const r=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id'); if(r.error){alert(r.error.message);return;}posItems=r.data||[];}
+function backToTables(){document.getElementById('posOrderView').style.display='none';document.getElementById('posTableView').style.display='block';posCurrentOrder=null;posCurrentTable=null;loadPOSTables();}
 function posVisibleProducts(){
   const q=(document.getElementById('posProductSearch')?.value||'').trim().toLocaleLowerCase('tr-TR');
   return products.filter(p=>{
-    if(p.is_active===false)return false;
+    if(!p.is_active)return false;
     const cat=categories.find(c=>String(c.id)===String(p.category_id));
     if(posCurrentCategory!=='all'&&String(p.category_id)!==String(posCurrentCategory))return false;
     if(posCurrentSubcategory!=='all'&&String(p.subcategory||'').trim().toLocaleLowerCase('tr-TR')!==String(posCurrentSubcategory).trim().toLocaleLowerCase('tr-TR'))return false;
@@ -2895,39 +2891,12 @@ function choosePOSOption(i){
 }
 function cancelPOSOption(){const el=document.getElementById('posOptionOverlay');if(posOptionResolver)posOptionResolver(null);posOptionResolver=null;el?.remove();}
 async function addPOSProduct(productId){
-  const p=products.find(x=>String(x.id)===String(productId));if(!p||!posCurrentTable)return;
-  let optionLabel='',price=Number(p.price||0),note='';
+  const p=products.find(x=>String(x.id)===String(productId));if(!p||!posCurrentOrder)return;let optionLabel='',price=Number(p.price||0),note='';
   const opts=buildPOSOptionChoices(p);
   if(opts.length){const choice=await openPOSOptionModal(p.id,opts);if(!choice)return;optionLabel=choice.label;price=choice.price;}
-  let createdOrder=false;
-  if(!posCurrentOrder){
-    const user=(await sb.auth.getUser()).data.user;
-    const discount=Math.min(100,Math.max(0,Number(document.getElementById('posDiscount')?.value||0)));
-    const r=await sb.from('pos_orders').insert({table_id:posCurrentTable.id,branch:posBranch,opened_by:user?.id,discount_percent:discount}).select().single();
-    if(r.error){alert(r.error.message);return;}
-    posCurrentOrder=r.data; posOrders.push(posCurrentOrder); createdOrder=true;
-    document.getElementById('posOrderStatus').textContent='DOLU';
-    document.getElementById('ticketOpenedInfo').textContent='Açılış: '+new Date(posCurrentOrder.opened_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
-  }
   const existing=posItems.find(x=>String(x.order_id)===String(posCurrentOrder.id)&&String(x.product_id)===String(p.id)&&String(x.option_label||'')===String(optionLabel));
-  if(existing){
-    const r=await sb.from('pos_order_items').update({quantity:Number(existing.quantity)+1}).eq('id',existing.id);
-    if(r.error){alert(r.error.message);return;}
-    existing.quantity++;
-  }else{
-    const r=await sb.from('pos_order_items').insert({order_id:posCurrentOrder.id,product_id:p.id,product_name:p.name,unit_price:price,quantity:1,option_label:optionLabel,note}).select().single();
-    if(r.error){
-      if(createdOrder){
-        await sb.from('pos_orders').delete().eq('id',posCurrentOrder.id);
-        posOrders=posOrders.filter(x=>String(x.id)!==String(posCurrentOrder.id));
-        posCurrentOrder=null;
-        document.getElementById('posOrderStatus').textContent='BOŞ';
-        document.getElementById('ticketOpenedInfo').textContent='Yeni hesap';
-      }
-      alert(r.error.message);return;
-    }
-    posItems.push(r.data);
-  }
+  if(existing){const r=await sb.from('pos_order_items').update({quantity:Number(existing.quantity)+1}).eq('id',existing.id);if(r.error){alert(r.error.message);return;}existing.quantity++;}
+  else{const r=await sb.from('pos_order_items').insert({order_id:posCurrentOrder.id,product_id:p.id,product_name:p.name,unit_price:price,quantity:1,option_label:optionLabel,note}).select().single();if(r.error){alert(r.error.message);return;}posItems.push(r.data);}
   renderPOSTicket();renderPOSTables();
 }
 function discountedSubtotal(){const sub=posItems.reduce((s,x)=>s+Number(x.unit_price)*Number(x.quantity),0),d=Math.min(100,Math.max(0,Number(document.getElementById('posDiscount')?.value||0)));return {sub,discount:sub*d/100,total:sub-sub*d/100};}
@@ -2953,21 +2922,7 @@ function renderPOSTicket(){
   const all=posItems.length&&posItems.every(x=>posSelectedItemIds.has(Number(x.id))&&Number(posSelectedQty.get(Number(x.id))||0)===Number(x.quantity));const allBtn=document.querySelector('.ticket-select-all');if(allBtn)allBtn.textContent=all?'Seçimi Kaldır':'Tümünü Seç';
 }
 async function changePOSQty(id,delta){const x=posItems.find(i=>i.id===id);if(!x)return;const q=Number(x.quantity)+delta;if(q<=0)return removePOSItem(id);const r=await sb.from('pos_order_items').update({quantity:q}).eq('id',id);if(r.error){alert(r.error.message);return;}x.quantity=q;renderPOSTicket();renderPOSTables();}
-async function removePOSItem(id){
-  const r=await sb.from('pos_order_items').delete().eq('id',id);
-  if(r.error){alert(r.error.message);return;}
-  posItems=posItems.filter(x=>x.id!==id);
-  if(!posItems.length && posCurrentOrder){
-    const orderId=posCurrentOrder.id;
-    const d=await sb.from('pos_orders').delete().eq('id',orderId);
-    if(d.error){alert(d.error.message);return;}
-    posOrders=posOrders.filter(x=>String(x.id)!==String(orderId));
-    posCurrentOrder=null;
-    document.getElementById('posOrderStatus').textContent='BOŞ';
-    document.getElementById('ticketOpenedInfo').textContent='Yeni hesap';
-  }
-  renderPOSTicket();renderPOSTables();
-}
+async function removePOSItem(id){const r=await sb.from('pos_order_items').delete().eq('id',id);if(r.error){alert(r.error.message);return;}posItems=posItems.filter(x=>x.id!==id);renderPOSTicket();renderPOSTables();}
 async function saveCurrentDiscount(){if(!posCurrentOrder)return;const v=Math.min(100,Math.max(0,Number(document.getElementById('posDiscount').value||0)));document.getElementById('posDiscount').value=v;await sb.from('pos_orders').update({discount_percent:v}).eq('id',posCurrentOrder.id);posCurrentOrder.discount_percent=v;renderPOSTicket();}
 function changeDiscount(delta){const i=document.getElementById('posDiscount');i.value=Math.min(100,Math.max(0,Number(i.value||0)+delta));saveCurrentDiscount();}
 async function clearCurrentTable(){if(!posCurrentOrder){return}if(!confirm('Bu masadaki tüm ürünler silinsin mi?'))return;const r=await sb.from('pos_orders').delete().eq('id',posCurrentOrder.id);if(r.error){alert(r.error.message);return;}backToTables();}
@@ -2984,43 +2939,7 @@ function togglePaymentLine(id){const input=document.querySelector(`[data-pay-ite
 function selectPaymentMethod(m){posPaymentMethod=m;document.getElementById('payCash').classList.toggle('active',m==='cash');document.getElementById('payCard').classList.toggle('active',m==='card');}
 function paymentSelection(){return [...document.querySelectorAll('[data-pay-item]')].map(i=>({id:Number(i.dataset.payItem),qty:Math.max(0,Math.min(Number(i.max),Number(i.value||0)))})).filter(x=>x.qty>0)}
 function refreshPaymentTotal(){const sel=paymentSelection();let raw=0;sel.forEach(s=>{const x=posItems.find(i=>i.id===s.id);if(x)raw+=Number(x.unit_price)*s.qty});const v=discountedSubtotal();const total=posPaymentMode==='full'?v.total:raw*(1-Number(document.getElementById('posDiscount')?.value||0)/100);const el=document.getElementById('paymentTotal');if(el)el.textContent=formatPrice(total);document.querySelectorAll('[data-pay-line]').forEach(row=>{const input=row.querySelector('[data-pay-item]');const qty=Number(input?.value||0);row.classList.toggle('chosen',qty>0);const check=row.querySelector('.pay-check');if(check)check.textContent=qty>0?'✓':'';const b=row.querySelector('b');const x=posItems.find(i=>Number(i.id)===Number(input?.dataset.payItem));if(b&&x)b.textContent=formatPrice(Number(x.unit_price)*qty);});}
-async function confirmPOSPayment(){
-  const sel=paymentSelection();
-  if(!sel.length){alert('Ödeme için en az bir ürün/adet seç.');return;}
-  if(posPaymentMode==='full'){
-    const {total}=discountedSubtotal();
-    if(!confirm(formatPrice(total)+' tutarında '+(posPaymentMethod==='cash'?'nakit':'kart')+' ödeme alınacak. Hesap kapatılsın mı?'))return;
-    const r=await sb.from('pos_orders').delete().eq('id',posCurrentOrder.id);
-    if(r.error){alert(r.error.message);return;}
-    closePaymentOverlay();await backToTables();return;
-  }
-  for(const s of sel){
-    const x=posItems.find(i=>i.id===s.id);if(!x)continue;
-    const remain=Number(x.quantity)-s.qty;
-    if(remain<=0){
-      const r=await sb.from('pos_order_items').delete().eq('id',x.id);if(r.error){alert(r.error.message);return;}
-    }else{
-      const r=await sb.from('pos_order_items').update({quantity:remain}).eq('id',x.id);if(r.error){alert(r.error.message);return;}
-    }
-  }
-  closePaymentOverlay();posSelectedItemIds.clear();posSelectedQty.clear();
-  if(posCurrentOrder){
-    const r=await sb.from('pos_order_items').select('id').eq('order_id',posCurrentOrder.id).limit(1);
-    if(!r.error && !(r.data||[]).length){
-      const orderId=posCurrentOrder.id;
-      const d=await sb.from('pos_orders').delete().eq('id',orderId);
-      if(d.error){alert(d.error.message);return;}
-      posOrders=posOrders.filter(x=>String(x.id)!==String(orderId));
-      posCurrentOrder=null;
-      document.getElementById('posOrderStatus').textContent='BOŞ';
-      document.getElementById('ticketOpenedInfo').textContent='Yeni hesap';
-    }else{
-      const items=await sb.from('pos_order_items').select('*').eq('order_id',posCurrentOrder.id).order('id');
-      if(!items.error)posItems=items.data||[];
-    }
-  }
-  renderPOSTicket();renderPOSTables();
-}
+async function confirmPOSPayment(){const sel=paymentSelection();if(!sel.length){alert('Ödeme için en az bir ürün/adet seç.');return;}if(posPaymentMode==='full'){const {total}=discountedSubtotal();if(!confirm(`${formatPrice(total)} tutarında ${posPaymentMethod==='cash'?'nakit':'kart'} ödeme alınacak. Hesap kapatılsın mı?`))return;const r=await sb.from('pos_orders').delete().eq('id',posCurrentOrder.id);if(r.error){alert(r.error.message);return;}closePaymentOverlay();backToTables();return;}for(const s of sel){const x=posItems.find(i=>i.id===s.id);if(!x)continue;const remain=Number(x.quantity)-s.qty;if(remain<=0){const r=await sb.from('pos_order_items').delete().eq('id',x.id);if(r.error){alert(r.error.message);return;}}else{const r=await sb.from('pos_order_items').update({quantity:remain}).eq('id',x.id);if(r.error){alert(r.error.message);return;}}}closePaymentOverlay();posSelectedItemIds.clear();posSelectedQty.clear();await loadPOSOrderItems();renderPOSTicket();renderPOSTables();}
 function closePaymentOverlay(){document.getElementById('posPaymentOverlay')?.remove();}
 async function openMergeTables(){if(!posCurrentTable)return;const old=document.getElementById('posMergeOverlay');if(old)old.remove();const choices=posTables.filter(t=>String(t.id)!==String(posCurrentTable.id)).map(t=>{const o=activeOrderForTable(t.id);return `<button type="button" class="merge-table-btn ${o?'occupied':''}" ${o?'':'disabled'} onclick="mergePOSTable(${t.id})">${esc(t.label)}<br><small>${o?'DOLU':'BOŞ'}</small></button>`}).join('');document.body.insertAdjacentHTML('beforeend',`<div class="pos-payment-overlay" id="posMergeOverlay"><div class="pos-payment-card"><h3>Masa Birleştir</h3><p>${esc(posCurrentTable.label)} hangi dolu masayla birleşsin?</p><div class="pos-merge-grid">${choices}</div><button class="payment-cancel" onclick="document.getElementById('posMergeOverlay').remove()">İptal</button></div></div>`);}
 async function mergePOSTable(targetId){const target=posTables.find(t=>String(t.id)===String(targetId)),targetOrder=activeOrderForTable(targetId);if(!targetOrder||!posCurrentOrder)return;const sourceItems=posItems.slice();const r=await sb.from('pos_order_items').select('*').eq('order_id',targetOrder.id);if(r.error){alert(r.error.message);return;}for(const x of sourceItems){const match=(r.data||[]).find(y=>String(y.product_id)===String(x.product_id)&&String(y.option_label||'')===String(x.option_label||''));if(match){await sb.from('pos_order_items').update({quantity:Number(match.quantity)+Number(x.quantity)}).eq('id',match.id);}else{await sb.from('pos_order_items').insert({order_id:targetOrder.id,product_id:x.product_id,product_name:x.product_name,unit_price:x.unit_price,quantity:x.quantity,option_label:x.option_label,note:x.note});}}
@@ -4667,8 +4586,7 @@ footer{margin:34px 0 5px!important;padding:25px 12px 10px!important;border-top:1
 #posPanel .pos-products-panel,#posPanel .pos-ticket-panel{border-radius:12px!important;border:1px solid #403631!important;background:#151311!important;box-shadow:0 12px 28px #0004!important}
 #posPanel .pos-products-panel{padding:0!important;overflow:hidden}.pos-products-head{display:block!important;padding:17px 13px 8px!important;margin:0!important}.pos-products-head .pos-section-kicker{display:none}.pos-products-head h3{margin:0!important;font-size:20px!important;color:#f7efe7}
 #posPanel .pos-category-strip{padding:0 13px 10px!important;margin:0!important;gap:7px!important}.pos-cat-btn{padding:9px 12px!important;border-radius:7px!important;font-size:9px!important;background:#25201d!important;border-color:#39312c!important;color:#ddd0c7!important}.pos-cat-btn.active{background:#e45f84!important;border-color:#e45f84!important;color:#fff!important}
-#posPanel .pos-product-grid{display:grid!important;visibility:visible!important;opacity:1!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;max-height:calc(100vh - 370px)!important;padding:2px 13px 13px!important;overflow:auto}
-#posPanel .pos-product-card{display:block!important;visibility:visible!important;opacity:1!important}
+#posPanel .pos-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;max-height:calc(100vh - 370px)!important;padding:2px 13px 13px!important;overflow:auto}
 #posPanel .pos-product-card{border-radius:8px!important;background:#1f1b18!important;border-color:#423831!important}.pos-product-photo{aspect-ratio:1.1!important}.pos-product-info{padding:8px!important}.pos-product-name{font-size:10px!important;min-height:26px!important}.pos-product-price{font-size:11px!important;margin-top:5px!important}
 #posPanel .pos-ticket-panel{padding:13px!important;min-height:0!important;height:100%;box-sizing:border-box}.ticket-head{padding-bottom:10px!important}.ticket-head strong{font-size:18px!important}.ticket-head small{font-size:8px!important}.ticket-items{max-height:none!important;min-height:160px!important}.ticket-row{padding:9px 2px!important;grid-template-columns:1fr auto auto!important}.ticket-row-main b{font-size:10px!important}.ticket-row-price{font-size:9px!important;min-width:58px!important}.qty-control button{width:23px!important;height:25px!important}.qty-control span{min-width:22px!important}.ticket-summary>div{padding:5px 0!important}.ticket-total strong{font-size:23px!important}.ticket-actions{grid-template-columns:1fr 1fr!important}.ticket-actions .btn{padding:9px 5px!important;font-size:8px!important}.print-btn{grid-column:1/-1!important}.pos-close-account{padding:12px!important;font-size:11px!important}
 #posPanel .pos-order-topbar{padding:10px 24px 0!important}.pos-order-topbar .btn{font-size:9px!important}.pos-order-topbar{margin-bottom:4px!important}
