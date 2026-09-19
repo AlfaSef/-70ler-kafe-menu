@@ -1,5 +1,5 @@
 plugins { id 'com.android.application' }
 
 android { namespace 'com.seventies.cafe.personel'; compileSdk 35
-    defaultConfig { applicationId 'com.seventies.cafe.personel'; minSdk 23; targetSdk 35; versionCode 6; versionName '1.0.5' }
+    defaultConfig { applicationId 'com.seventies.cafe.personel'; minSdk 23; targetSdk 35; versionCode 7; versionName '1.0.6' }
 }
